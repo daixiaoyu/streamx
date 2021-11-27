@@ -1,3 +1,5 @@
+<!--
+
 <template>
   <div class="footer">
     <div class="links">
@@ -12,6 +14,7 @@
     </div>
   </div>
 </template>
+-->
 
 <script>
 export default {

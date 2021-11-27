@@ -18,7 +18,7 @@ export default {
   props: {
     title: {
       type: String,
-      default: 'StreamX',
+      default: 'Dustess',
       required: false
     },
     showTitle: {
@@ -29,18 +29,18 @@ export default {
   },
   data () {
     return {
-      logoImg: require('@assets/imgs/logo2.svg')
+      logoImg: require('@assets/imgs/cf-logo-2.png')
     }
   },
   methods: {
     collapsed(flag) {
       if(flag) {
         setTimeout(()=>{
-          this.logoImg = require('@assets/imgs/logo.svg')
+          this.logoImg = require('@assets/imgs/cf-logo-2.png')
         },50)
       } else {
         setTimeout(()=>{
-          this.logoImg = require('@assets/imgs/logo2.svg')
+          this.logoImg = require('@assets/imgs/cf-logo-2.png')
         },50)
       }
     }

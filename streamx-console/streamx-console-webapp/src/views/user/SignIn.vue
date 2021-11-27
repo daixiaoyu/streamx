@@ -6,13 +6,13 @@
           <div class="header">
             <a href="/">
               <img
-                src="~@/assets/imgs/logo.svg"
+                src="~@/assets/imgs/cf-logo-2.png"
                 class="logo"
                 alt="logo">
             </a>
           </div>
           <div class="desc">
-            StreamX, Make Flink|Spark easier!
+            尘峰实时计算平台——瞬间洞悉万千世界
           </div>
         </div>
         <a-form
@@ -25,7 +25,7 @@
             <a-input
               size="large"
               type="text"
-              placeholder="username / admin"
+              placeholder="username "
               v-decorator="[
                 'username',
                 {rules: [{ required: true, message: 'please enter username' }], validateTrigger: 'change'}
@@ -42,7 +42,7 @@
               size="large"
               type="password"
               autocomplete="false"
-              placeholder="password / streamx"
+              placeholder="password "
               v-decorator="[
                 'password',
                 {rules: [{ required: true, message: 'please enter password' }], validateTrigger: 'blur'}
@@ -63,7 +63,7 @@
               class="signin-button"
               :loading="state.loginBtn"
               :disabled="state.loginBtn">
-              Sign in
+              登录
             </a-button>
           </a-form-item>
         </a-form>

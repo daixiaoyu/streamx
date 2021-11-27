@@ -3,11 +3,10 @@
     class="user-wrapper">
 
     <div class="slogan">
-      <span class="slogan-streamx">StreamX </span>, &nbsp;
+      <span class="slogan-streamx">尘峰信息 </span> &nbsp;
       <span class="slogan-action">
-        <span class="slogan-make">Make</span>&nbsp;
-        <span class="slogan-target">Flink|Spark</span>&nbsp;
-        <span class="slogan-result">easier!</span>
+        <span class="slogan-make">流式计算</span>&nbsp;
+        <span class="slogan-result">瞬间洞悉万千世界</span>
       </span>
     </div>
 
@@ -16,13 +15,16 @@
         <svg-icon name="theme" size="small" class="icon" @click.native="handleChangeTheme(false)"></svg-icon>
       </a>
 
+
+
+      <!--
+
       <a
         href="http://www.streamxhub.com/zh/doc/"
         title="How to use"
         target="_blank">
         <svg-icon name="question" size="small" class="icon"></svg-icon>
       </a>
-
       <a
         href="https://github.com/streamxhub/streamx"
         title="GitHub"
@@ -43,6 +45,7 @@
         target="_blank">
         <img src="https://img.shields.io/github/forks/streamxhub/streamx.svg?sanitize=true" class="shields">
       </a>
+      -->
 
       <notice class="action"/>
 
