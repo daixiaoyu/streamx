@@ -244,14 +244,7 @@ public class ApplicationConfigServiceImpl
         if (flinkConfTemplate == null) {
             String[] activeProfiles = context.getEnvironment().getActiveProfiles();
             String path;
-            if (ArrayUtils.isNotEmpty(activeProfiles) && activeProfiles[0].equals(PROD_ENV_NAME)) {
-                //生产环境部署读取conf/flink-application.template
-                path = WebUtils.getAppDir("conf").concat("/flink-application.template");
-            } else {
-                URL url = Thread.currentThread().getContextClassLoader().getResource("flink-application.template");
-                assert url != null;
-                path = url.getPath();
-            }
+            path = WebUtils.getAppDir("conf").concat("/flink-application.template");
             File file = new File(path);
             try {
                 String conf = FileUtils.readFileToString(file);
