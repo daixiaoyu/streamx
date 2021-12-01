@@ -3,7 +3,7 @@
     class="user-wrapper">
 
     <div class="slogan">
-      <span class="slogan-streamx">尘峰信息 </span> &nbsp;
+      <span class="slogan-streamx">尘锋信息 </span> &nbsp;
       <span class="slogan-action">
         <span class="slogan-make">实时计算</span>&nbsp;
         <span class="slogan-result">瞬息洞察万千世界</span>
