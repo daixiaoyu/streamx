@@ -311,7 +311,9 @@ export default {
   line-height: 60px;
   font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
   .slogan-streamx,.slogan-action {
-    background: linear-gradient(130deg, #24c6dc, #5433ff 41.07%, #f09 76.05%);
+    font-family:"微软雅黑";
+    font-weight: normal;
+    background: linear-gradient(110deg, #24c6dc, #5433ff 41.07%, #f09 76.05%);
     -webkit-text-fill-color: transparent;
     -webkit-background-clip: text;
     -webkit-box-decoration-break: clone;
