@@ -82,6 +82,10 @@
             <if test="application.state != null and application.state != ''">
                 AND t.state = #{application.state}
             </if>
+
+            <if test="application.userId != null and application.userId != ''">
+                AND t.user_id = #{application.userId}
+            </if>
             <if test="application.stateArray != null and application.stateArray.length>0">
                 AND t.state IN
                 <foreach item="item" index="index" collection="application.stateArray" open="("  close=")" separator=",">
