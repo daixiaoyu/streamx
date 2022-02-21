@@ -887,7 +887,7 @@
       queryParams: {},
       sortedInfo: null,
       filteredInfo: null,
-      queryInterval: 2000,
+      queryInterval: 10000,
       yarn: null,
       deployVisible: false,
       stopVisible: false,
@@ -1448,6 +1448,16 @@
         params.pageNum = this.pagination.defaultCurrent
       }
       list({...params}).then((resp) => {
+
+
+          if (!resp.data) {
+            this.$swal.fire(
+              '未加入项目组',
+               resp.message.replaceAll(/\[StreamX]/g,''),
+              'error'
+            )
+          }
+
         this.loading = false
         const pagination = {...this.pagination}
         pagination.total = parseInt(resp.data.total)

@@ -21,19 +21,22 @@
 package com.streamxhub.streamx.console.system.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.streamxhub.streamx.console.system.entity.UserRole;
+import com.streamxhub.streamx.console.system.entity.GroupUser;
 
 import java.util.List;
 
-public interface UserRoleService extends IService<UserRole> {
+/**
+ * @author benjobs
+ */
+public interface GroupUserService extends IService<GroupUser> {
 
-    void deleteUserRolesByRoleId(String[] roleIds);
+    List<GroupUser> getGroupUserList(Long userId);
 
-    void deleteUserRolesByUserId(String[] userIds);
+    Long getTopGroupIdByUser(Long userId);
 
-    List<String> findUserIdsByRoleId(String[] roleIds);
+    List<GroupUser> getGroupUserList();
 
-    List<Long> listRoleIdListByUserId(Long userId);
+    List<Long> getGroupIdList();
 
-    Boolean isAdmin(Long userId);
+    List<Long> getGroupIdList(Long userId);
 }

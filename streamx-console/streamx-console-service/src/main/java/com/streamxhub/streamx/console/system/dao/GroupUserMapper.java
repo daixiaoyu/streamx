@@ -18,22 +18,14 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package com.streamxhub.streamx.console.system.service;
+package com.streamxhub.streamx.console.system.dao;
 
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.streamxhub.streamx.console.system.entity.UserRole;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.streamxhub.streamx.console.system.entity.GroupUser;
 
-import java.util.List;
+/**
+ * @author benjobs
+ */
+public interface GroupUserMapper extends BaseMapper<GroupUser> {
 
-public interface UserRoleService extends IService<UserRole> {
-
-    void deleteUserRolesByRoleId(String[] roleIds);
-
-    void deleteUserRolesByUserId(String[] userIds);
-
-    List<String> findUserIdsByRoleId(String[] roleIds);
-
-    List<Long> listRoleIdListByUserId(Long userId);
-
-    Boolean isAdmin(Long userId);
 }
