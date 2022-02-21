@@ -42,6 +42,7 @@ import com.streamxhub.streamx.console.core.enums.DeployState;
 import com.streamxhub.streamx.console.core.service.ProjectService;
 import com.streamxhub.streamx.console.core.task.FlinkTrackingTask;
 import com.streamxhub.streamx.console.system.authentication.ServerComponent;
+import com.streamxhub.streamx.console.system.service.GroupUserService;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.jgit.api.CloneCommand;
 import org.eclipse.jgit.api.Git;
@@ -77,6 +78,9 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project>
     private ApplicationMapper applicationMapper;
 
     @Autowired
+    private GroupUserService groupUserService;
+
+    @Autowired
     private ServerComponent serverComponent;
 
     @Autowired
@@ -100,6 +104,7 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project>
         RestResponse response = RestResponse.create();
         if (count == 0) {
             project.setDate(new Date());
+            project.setGroupId(groupUserService.getTopGroupIdByUser(serverComponent.getUser().getUserId()));
             boolean status = save(project);
             if (status) {
                 return response.message("添加项目成功").data(true);
@@ -133,7 +138,8 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project>
 
     @Override
     public IPage<Project> page(Project project, RestRequest request) {
-        Long userId = serverComponent.getUser().getUserId();
+        List<Long> groupIdList = groupUserService.getGroupIdList();
+        project.setGroupIdList(groupIdList);
         Page<Project> page = new Page<>();
         SortUtils.handlePageSort(request, page, "date", Constant.ORDER_DESC, false);
         return this.baseMapper.findProject(page, project);

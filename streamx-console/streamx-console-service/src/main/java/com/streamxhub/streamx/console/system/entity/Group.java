@@ -18,22 +18,25 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package com.streamxhub.streamx.console.system.service;
+package com.streamxhub.streamx.console.system.entity;
 
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.streamxhub.streamx.console.system.entity.UserRole;
+import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 
-import java.util.List;
+import java.util.Date;
 
-public interface UserRoleService extends IService<UserRole> {
+/**
+ * @author benjobs
+ */
+@Data
+@TableName("t_group")
+@Slf4j
+public class Group {
 
-    void deleteUserRolesByRoleId(String[] roleIds);
+    private Long groupId;
 
-    void deleteUserRolesByUserId(String[] userIds);
+    private String groupName;
 
-    List<String> findUserIdsByRoleId(String[] roleIds);
-
-    List<Long> listRoleIdListByUserId(Long userId);
-
-    Boolean isAdmin(Long userId);
+    private Date createTime;
 }
