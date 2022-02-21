@@ -41,6 +41,7 @@ import com.streamxhub.streamx.console.core.entity.Project;
 import com.streamxhub.streamx.console.core.enums.DeployState;
 import com.streamxhub.streamx.console.core.service.ProjectService;
 import com.streamxhub.streamx.console.core.task.FlinkTrackingTask;
+import com.streamxhub.streamx.console.system.authentication.ServerComponent;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.jgit.api.CloneCommand;
 import org.eclipse.jgit.api.Git;
@@ -74,6 +75,9 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project>
 
     @Autowired
     private ApplicationMapper applicationMapper;
+
+    @Autowired
+    private ServerComponent serverComponent;
 
     @Autowired
     private SimpMessageSendingOperations simpMessageSendingOperations;
@@ -129,6 +133,7 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project>
 
     @Override
     public IPage<Project> page(Project project, RestRequest request) {
+        Long userId = serverComponent.getUser().getUserId();
         Page<Project> page = new Page<>();
         SortUtils.handlePageSort(request, page, "date", Constant.ORDER_DESC, false);
         return this.baseMapper.findProject(page, project);
