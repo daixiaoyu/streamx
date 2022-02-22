@@ -20,7 +20,9 @@
  */
 package com.streamxhub.streamx.console.system.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.streamxhub.streamx.console.base.domain.RestRequest;
 import com.streamxhub.streamx.console.system.entity.Group;
 
 /**
@@ -28,4 +30,5 @@ import com.streamxhub.streamx.console.system.entity.Group;
  */
 public interface GroupService extends IService<Group> {
 
+    IPage<Group> findGroups(Group group, RestRequest restRequest);
 }
