@@ -96,7 +96,14 @@ public class ApplicationController {
     @PostMapping("list")
     @RequiresPermissions("app:view")
     public RestResponse list(Application app, RestRequest request) {
-        IPage<Application> applicationList = applicationService.page(app, request);
+        IPage<Application> applicationList;
+
+        try {
+            applicationList = applicationService.page(app, request);
+        } catch (Exception e) {
+            return RestResponse.create().data(false).message(e.getMessage());
+        }
+
         return RestResponse.create().data(applicationList);
     }
 

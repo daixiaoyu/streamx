@@ -84,6 +84,8 @@ public class Application implements Serializable {
      */
     private Long userId;
 
+    private Long groupId;
+
     /**
      * 前端和程序在yarn中显示的名称
      */
@@ -242,6 +244,8 @@ public class Application implements Serializable {
     private transient String createTimeFrom;
     private transient String createTimeTo;
     private transient String backUpDescription;
+
+    private transient List<Long> groupIdList;
 
     /**
      * Flink Web UI Url

@@ -53,6 +53,7 @@ import com.streamxhub.streamx.console.core.runner.EnvInitializer;
 import com.streamxhub.streamx.console.core.service.*;
 import com.streamxhub.streamx.console.core.task.FlinkTrackingTask;
 import com.streamxhub.streamx.console.system.authentication.ServerComponent;
+import com.streamxhub.streamx.console.system.service.GroupUserService;
 import com.streamxhub.streamx.flink.core.conf.ParameterCli;
 import com.streamxhub.streamx.flink.kubernetes.K8sFlinkTrkMonitor;
 import com.streamxhub.streamx.flink.kubernetes.model.FlinkMetricCV;
@@ -159,10 +160,14 @@ public class ApplicationServiceImpl extends ServiceImpl<ApplicationMapper, Appli
     @Autowired
     private K8sFlinkTrkMonitor k8sFlinkTrkMonitor;
 
+    @Autowired
+    private GroupUserService groupUserService;
+
     @PostConstruct
     public void resetOptionState() {
         this.baseMapper.resetOptionState();
     }
+
 
     @Override
     public Map<String, Serializable> dashboard() {
@@ -415,10 +420,8 @@ public class ApplicationServiceImpl extends ServiceImpl<ApplicationMapper, Appli
     @Override
     public IPage<Application> page(Application appParam, RestRequest request) {
         Page<Application> page = new Page<>();
-        if (null == appParam.getUserId()) {
-            Long userId = serverComponent.getUser().getUserId();
-            appParam.setUserId(userId);
-        }
+        List<Long> groupIdList = groupUserService.getGroupIdList();
+        appParam.setGroupIdList(groupIdList);
         SortUtils.handlePageSort(request, page, "create_time", Constant.ORDER_DESC, false);
         this.baseMapper.page(page, appParam);
         //瞒天过海,暗度陈仓,偷天换日,鱼目混珠.
@@ -522,7 +525,9 @@ public class ApplicationServiceImpl extends ServiceImpl<ApplicationMapper, Appli
     @Override
     @Transactional(rollbackFor = {Exception.class})
     public boolean create(Application appParam) {
-        appParam.setUserId(serverComponent.getUser().getUserId());
+        Long userId = serverComponent.getUser().getUserId();
+        appParam.setUserId(userId);
+        appParam.setGroupId(groupUserService.getTopGroupIdByUser(userId));
         appParam.setState(FlinkAppState.CREATED.getValue());
         appParam.setOptionState(OptionState.NONE.getValue());
         appParam.setCreateTime(new Date());

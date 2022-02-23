@@ -49,6 +49,7 @@ import java.util.*;
 public class Project implements Serializable {
     @TableId(value = "ID", type = IdType.AUTO)
     private Long id;
+    private Long groupId;
 
     private String name;
 
@@ -97,6 +98,8 @@ public class Project implements Serializable {
      * 项目源码路径
      */
     private transient String appSource;
+
+    private transient List<Long> groupIdList;
 
     @JsonIgnore
     private transient SettingService settingService;
