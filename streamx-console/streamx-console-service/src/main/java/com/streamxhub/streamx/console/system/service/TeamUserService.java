@@ -21,20 +21,20 @@
 package com.streamxhub.streamx.console.system.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.streamxhub.streamx.console.system.entity.GroupUser;
+import com.streamxhub.streamx.console.system.entity.TeamUser;
 
 import java.util.List;
 
 /**
  * @author benjobs
  */
-public interface GroupUserService extends IService<GroupUser> {
+public interface TeamUserService extends IService<TeamUser> {
 
-    List<GroupUser> getGroupUserList(Long userId);
+    List<TeamUser> getGroupUserList(Long userId);
 
     Long getTopGroupIdByUser(Long userId);
 
-    List<GroupUser> getGroupUserList();
+    List<TeamUser> getGroupUserList();
 
     List<Long> getGroupIdList();
 

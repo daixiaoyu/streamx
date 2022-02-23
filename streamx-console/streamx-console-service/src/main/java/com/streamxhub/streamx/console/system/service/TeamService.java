@@ -18,25 +18,19 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package com.streamxhub.streamx.console.system.entity;
+package com.streamxhub.streamx.console.system.service;
 
-import com.baomidou.mybatisplus.annotation.TableName;
-import lombok.Data;
-import lombok.extern.slf4j.Slf4j;
-
-import java.util.Date;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.streamxhub.streamx.console.base.domain.RestRequest;
+import com.streamxhub.streamx.console.system.entity.Team;
 
 /**
  * @author benjobs
  */
-@Data
-@TableName("t_group")
-@Slf4j
-public class Group {
+public interface TeamService extends IService<Team> {
 
-    private Long groupId;
+    IPage<Team> findTeams(Team group, RestRequest restRequest);
 
-    private String groupName;
-
-    private Date createTime;
+    void createTeam(Team team);
 }

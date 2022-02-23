@@ -21,11 +21,16 @@
 package com.streamxhub.streamx.console.system.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.streamxhub.streamx.console.system.entity.Group;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.streamxhub.streamx.console.system.entity.Team;
+import com.streamxhub.streamx.console.system.entity.User;
+import org.apache.ibatis.annotations.Param;
 
 /**
- * @author benjobs
+ * @author daixinyu
  */
-public interface GroupMapper extends BaseMapper<Group> {
+public interface TeamMapper extends BaseMapper<Team> {
 
+    IPage<Team> findTeamList(Page<User> page,@Param("team") Team team);
 }

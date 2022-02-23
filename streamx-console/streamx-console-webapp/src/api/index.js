@@ -128,6 +128,14 @@ export default {
     DELETE: '/role/delete',
     MENU: '/role/menu'
   },
+  Team: {
+    POST: '/team/post',
+    UPDATE: '/team/update',
+    LIST: '/team/list',
+    CHECK_NAME: '/user/check/name',
+    DELETE: '/team/delete',
+    MENU: '/team/menu'
+  },
   Menu: {
     LIST: '/menu/list',
     DELETE: '/menu/delete',

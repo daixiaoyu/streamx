@@ -23,9 +23,9 @@ package com.streamxhub.streamx.console.system.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.streamxhub.streamx.console.system.authentication.ServerComponent;
-import com.streamxhub.streamx.console.system.dao.GroupUserMapper;
-import com.streamxhub.streamx.console.system.entity.GroupUser;
-import com.streamxhub.streamx.console.system.service.GroupUserService;
+import com.streamxhub.streamx.console.system.dao.TeamUserMapper;
+import com.streamxhub.streamx.console.system.entity.TeamUser;
+import com.streamxhub.streamx.console.system.service.TeamUserService;
 import com.streamxhub.streamx.console.system.service.UserRoleService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,22 +43,23 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 @Transactional(propagation = Propagation.SUPPORTS, readOnly = true, rollbackFor = Exception.class)
-public class GroupUserServiceImpl extends ServiceImpl<GroupUserMapper, GroupUser> implements GroupUserService {
+public class TeamUserServiceImpl extends ServiceImpl<TeamUserMapper, TeamUser> implements TeamUserService {
+
     @Autowired
     private ServerComponent serverComponent;
     @Autowired
     private UserRoleService userRoleService;
 
     @Override
-    public List<GroupUser> getGroupUserList(Long userId) {
+    public List<TeamUser> getGroupUserList(Long userId) {
 
         if (userRoleService.isAdmin(userId)) {
             return new ArrayList<>();
         }
 
-        QueryWrapper<GroupUser> queryWrapper = new QueryWrapper<>();
+        QueryWrapper<TeamUser> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq(true, "user_id", userId);
-        List<GroupUser> list = list(queryWrapper);
+        List<TeamUser> list = list(queryWrapper);
         if (null == list || list.size() == 0) {
             throw new IllegalArgumentException("您未加入项目组，请联系管理员：代欣雨");
         }
@@ -68,9 +69,9 @@ public class GroupUserServiceImpl extends ServiceImpl<GroupUserMapper, GroupUser
 
     @Override
     public Long getTopGroupIdByUser(Long userId) {
-        QueryWrapper<GroupUser> queryWrapper = new QueryWrapper<>();
+        QueryWrapper<TeamUser> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq(true, "user_id", userId);
-        List<GroupUser> list = list(queryWrapper);
+        List<TeamUser> list = list(queryWrapper);
         Boolean isAdmin = userRoleService.isAdmin(userId);
         if (null == list || list.size() <= 0) {
             if (isAdmin) {
@@ -78,12 +79,12 @@ public class GroupUserServiceImpl extends ServiceImpl<GroupUserMapper, GroupUser
             }
             throw new IllegalArgumentException("您未加入项目组，请联系管理员：代欣雨");
         }
-        return list.get(0).getGroupId();
+        return list.get(0).getTeamId();
     }
 
 
     @Override
-    public List<GroupUser> getGroupUserList() {
+    public List<TeamUser> getGroupUserList() {
         Long userId = serverComponent.getUser().getUserId();
         return getGroupUserList(userId);
     }
@@ -96,7 +97,7 @@ public class GroupUserServiceImpl extends ServiceImpl<GroupUserMapper, GroupUser
 
     @Override
     public List<Long> getGroupIdList(Long userId) {
-        List<GroupUser> groupIdList = getGroupUserList(userId);
-        return groupIdList.stream().map(groupUser -> groupUser.getGroupId()).collect(Collectors.toList());
+        List<TeamUser> groupIdList = getGroupUserList(userId);
+        return groupIdList.stream().map(groupUser -> groupUser.getTeamId()).collect(Collectors.toList());
     }
 }

@@ -20,40 +20,24 @@
  */
 package com.streamxhub.streamx.console.system.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.streamxhub.streamx.console.base.domain.Constant;
 import com.streamxhub.streamx.console.base.domain.RestRequest;
-import com.streamxhub.streamx.console.base.domain.router.RouterTree;
-import com.streamxhub.streamx.console.base.exception.ServiceException;
-import com.streamxhub.streamx.console.base.util.CommonUtils;
-import com.streamxhub.streamx.console.base.util.SortUtils;
-import com.streamxhub.streamx.console.base.util.TreeUtils;
-import com.streamxhub.streamx.console.core.dao.SavePointMapper;
-import com.streamxhub.streamx.console.core.entity.Application;
-import com.streamxhub.streamx.console.core.entity.FlinkEnv;
-import com.streamxhub.streamx.console.core.entity.SavePoint;
-import com.streamxhub.streamx.console.core.enums.CheckPointType;
-import com.streamxhub.streamx.console.core.service.FlinkEnvService;
-import com.streamxhub.streamx.console.core.service.SavePointService;
-import com.streamxhub.streamx.console.system.dao.GroupMapper;
-import com.streamxhub.streamx.console.system.entity.Group;
-import com.streamxhub.streamx.console.system.entity.Menu;
-import com.streamxhub.streamx.console.system.entity.Role;
+import com.streamxhub.streamx.console.base.util.ShaHashUtils;
+import com.streamxhub.streamx.console.system.dao.TeamMapper;
+import com.streamxhub.streamx.console.system.entity.Team;
 import com.streamxhub.streamx.console.system.entity.User;
-import com.streamxhub.streamx.console.system.service.GroupService;
+import com.streamxhub.streamx.console.system.service.TeamService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Date;
 
 /**
  * @author benjobs
@@ -61,17 +45,21 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 @Transactional(propagation = Propagation.SUPPORTS, readOnly = true, rollbackFor = Exception.class)
-public class GroupServiceImpl extends ServiceImpl<GroupMapper, Group> implements GroupService {
+public class TeamServiceImpl extends ServiceImpl<TeamMapper, Team> implements TeamService {
 
 
     @Override
-    public IPage<Group> findGroups(Group group, RestRequest request) {
-        Page<Group> page = new Page<>();
+    public IPage<Team> findTeams(Team team, RestRequest request) {
+        Page<User> page = new Page<>();
         page.setCurrent(request.getPageNum());
         page.setSize(request.getPageSize());
-        QueryWrapper<Group> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq(StringUtils.isNotBlank(group.getGroupName()),"group_name",group.getGroupName());
-        IPage<Group> resPage = this.baseMapper.selectPage(page, queryWrapper);
-        return resPage;
+        return this.baseMapper.findTeamList(page, team);
+    }
+
+    @Override
+    public void createTeam(Team team) {
+        // 创建团队
+        team.setCreateTime(new Date());
+        save(team);
     }
 }

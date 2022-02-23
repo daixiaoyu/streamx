@@ -30,13 +30,24 @@ import java.util.Date;
  * @author benjobs
  */
 @Data
-@TableName("t_group_user")
+@TableName("t_team")
 @Slf4j
-public class GroupUser {
+public class Team {
 
-    private Long groupId;
+    private Long teamId;
 
-    private Long userId;
+    private String teamName;
 
     private Date createTime;
+
+
+
+    // 排序字段
+    private transient String sortField;
+
+    // 排序规则 ascend 升序 descend 降序
+    private transient String sortOrder;
+
+    private transient String createTimeFrom;
+    private transient String createTimeTo;
 }
