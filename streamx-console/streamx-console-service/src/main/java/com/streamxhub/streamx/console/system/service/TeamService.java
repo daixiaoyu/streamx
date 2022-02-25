@@ -33,4 +33,8 @@ public interface TeamService extends IService<Team> {
     IPage<Team> findTeams(Team group, RestRequest restRequest);
 
     void createTeam(Team team);
+
+    Team findByName(String teamName);
+
+    Team findByCode(String teamCode);
 }

@@ -70,37 +70,13 @@
       :loading="loading"
       :scroll="{ x: 900 }"
       @change="handleTableChange">
-      <template
-        slot="email"
-        slot-scope="text">
-        <a-popover
-          placement="topLeft">
-          <template
-            slot="content">
-            <div>
-              {{ text }}
-            </div>
-          </template>
-          <p
-            style="width: 150px;margin-bottom: 0">
-            {{ text }}
-          </p>
-        </a-popover>
-      </template>
+
       <template
         slot="operation"
         slot-scope="text, record">
-        <svg-icon
-          name="edit"
-          v-permit="'team:update'"
-          v-if="(record.username !== 'admin' || userName === 'admin')"
-          border
-          @click.native="handleEdit(record)"
-          title="修改团队" />
         <a-popconfirm
           v-permit="'team:delete'"
-          v-if="record.username !== 'admin'"
-          title="Are you sure delete this user ?"
+          title="Are you sure delete this team ?"
           cancel-text="No"
           ok-text="Yes"
           @confirm="handleDelete(record)">
@@ -130,7 +106,7 @@ import UserEdit from './TeamEdit'
 import RangeDate from '@/components/DateTime/RangeDate'
 import SvgIcon from '@/components/SvgIcon'
 
-import { list, remove, reset as resetPassword } from '@/api/team'
+import { list, remove} from '@/api/team'
 import storage from '@/utils/storage'
 import {USER_NAME} from '@/store/mutation-types'
 
@@ -169,7 +145,10 @@ export default {
       return [{
         title: 'Team ID',
         dataIndex: 'teamId'
-      }, {
+      },{
+        title: 'Team Code',
+        dataIndex: 'teamCode'
+      },  {
         title: 'Team Name',
         dataIndex: 'teamName'
       },  {
@@ -228,7 +207,8 @@ export default {
     },
     handleDelete (record) {
       remove({
-        teamId: record.teamId
+        teamId: record.teamId,
+        sortField: 'test'
       }).then((resp) => {
         if (resp.status === 'success') {
           this.$message.success('delete successful')
@@ -237,6 +217,7 @@ export default {
           this.$message.error('delete failed')
         }
       })
+
     },
     resetPassword (user) {
       this.$swal.fire({

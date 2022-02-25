@@ -36,6 +36,8 @@ public class Team {
 
     private Long teamId;
 
+    private String teamCode;
+
     private String teamName;
 
     private Date createTime;

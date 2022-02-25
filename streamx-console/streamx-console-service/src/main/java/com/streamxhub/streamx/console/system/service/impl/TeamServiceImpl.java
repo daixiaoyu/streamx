@@ -20,6 +20,7 @@
  */
 package com.streamxhub.streamx.console.system.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
@@ -61,5 +62,16 @@ public class TeamServiceImpl extends ServiceImpl<TeamMapper, Team> implements Te
         // 创建团队
         team.setCreateTime(new Date());
         save(team);
+    }
+
+    @Override
+    public Team findByName(String teamName) {
+        return baseMapper.selectOne(new LambdaQueryWrapper<Team>().eq(Team::getTeamName, teamName));
+    }
+
+
+    @Override
+    public Team findByCode(String teamCode) {
+        return baseMapper.selectOne(new LambdaQueryWrapper<Team>().eq(Team::getTeamCode, teamCode));
     }
 }

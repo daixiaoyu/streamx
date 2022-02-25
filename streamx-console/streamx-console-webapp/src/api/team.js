@@ -49,6 +49,10 @@ export function checkTeamName (queryParam) {
   return http.post(api.Team.CHECK_NAME, queryParam)
 }
 
+export function checkTeamCode (queryParam) {
+  return http.post(api.Team.CHECK_CODE, queryParam)
+}
+
 export function post (queryParam) {
   return http.post(api.Team.POST, queryParam)
 }

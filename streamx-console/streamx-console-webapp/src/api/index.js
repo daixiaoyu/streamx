@@ -132,7 +132,8 @@ export default {
     POST: '/team/post',
     UPDATE: '/team/update',
     LIST: '/team/list',
-    CHECK_NAME: '/user/check/name',
+    CHECK_NAME: '/team/check/name',
+    CHECK_CODE: '/team/check/code',
     DELETE: '/team/delete',
     MENU: '/team/menu'
   },

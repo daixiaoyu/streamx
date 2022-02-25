@@ -26,6 +26,19 @@
       </a-form-item>
 
       <a-form-item
+        label="Team Code"
+        v-bind="formItemLayout"
+        :validate-status="validateStatus"
+        :help="code">
+        <a-input
+          @blur="handleTeamCodeBlur"
+          v-decorator="
+            ['teamCode',
+             {rules: [{ required: true }]}]" />
+      </a-form-item>
+
+
+      <a-form-item
         label="manager"
         v-bind="formItemLayout">
         <a-input v-decorator="['manager',{rules: [{ required: false }]}]" />
@@ -57,7 +70,7 @@
   </a-drawer>
 </template>
 <script>
-import { checkTeamName, post } from '@/api/team'
+import { checkTeamName, post ,checkTeamCode} from '@/api/team'
 
 const formItemLayout = {
   labelCol: { span: 4 },
@@ -78,7 +91,8 @@ export default {
       formItemLayout,
       form: this.$form.createForm(this),
       validateStatus: '',
-      help: ''
+      help: '',
+      code: ''
     }
   },
   methods: {
@@ -112,31 +126,59 @@ export default {
       })
     },
     handleTeamNameBlur (e) {
-      const username = (e && e.target.value) || ''
-      if (username.length) {
-        if (username.length > 20) {
+      const teamname = (e && e.target.value) || ''
+      if (teamname.length) {
+        if (teamname.length > 20) {
           this.validateStatus = 'error'
-          this.help = '用户名不能超过10个字符'
-        } else if (username.length < 4) {
+          this.help = 'team name不能超过10个字符'
+        } else if (teamname.length < 4) {
           this.validateStatus = 'error'
-          this.help = '用户名不能少于4个字符'
+          this.help = 'team name不能少于4个字符'
         } else {
           this.validateStatus = 'validating'
           checkTeamName({
-            username: username
+            teamName: teamname
           }).then((r) => {
             if (r.data) {
               this.validateStatus = 'success'
               this.help = ''
             } else {
               this.validateStatus = 'error'
-              this.help = '抱歉，该用户名已存在'
+              this.help = '抱歉，team name 已经存在'
             }
           })
         }
       } else {
         this.validateStatus = 'error'
-        this.help = '用户名不能为空'
+        this.help = 'team name不能为空'
+      }
+    },
+    handleTeamCodeBlur (e) {
+      const teamcode = (e && e.target.value) || ''
+      if (teamcode.length) {
+        if (teamcode.length > 20) {
+          this.validateStatus = 'error'
+          this.code = 'code不能超过10个字符'
+        } else if (teamcode.length < 4) {
+          this.validateStatus = 'error'
+          this.code = 'code不能少于4个字符'
+        } else {
+          this.validateStatus = 'validating'
+          checkTeamCode({
+            teamCode: teamcode
+          }).then((r) => {
+            if (r.data) {
+              this.validateStatus = 'success'
+              this.code = ''
+            } else {
+              this.validateStatus = 'error'
+              this.code = '抱歉，team code 已经存在'
+            }
+          })
+        }
+      } else {
+        this.validateStatus = 'error'
+        this.code = 'team code 不能为空'
       }
     }
   },

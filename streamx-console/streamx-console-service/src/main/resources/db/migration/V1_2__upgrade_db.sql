@@ -47,9 +47,11 @@ DROP TABLE IF EXISTS `streamx`.`t_team`;
 CREATE TABLE `streamx`.`t_team`
 (
     `TEAM_ID`     bigint       NOT NULL AUTO_INCREMENT COMMENT 'ID',
+    `TEAM_CODE`   varchar(255) NOT NULL COMMENT '团队标识 后续可以用于队列 资源隔离相关',
     `TEAM_NAME`   varchar(255) NOT NULL COMMENT '团队名',
     `CREATE_TIME` datetime     NOT NULL COMMENT '创建时间',
-    PRIMARY KEY (`TEAM_ID`) USING BTREE
+    PRIMARY KEY (`TEAM_ID`) USING BTREE,
+    UNIQUE KEY `TEAM_CODE` (TEAM_CODE) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
@@ -63,12 +65,11 @@ CREATE TABLE `streamx`.`t_team_user`
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
-insert into streamx.t_team values (1, '大数据组', '2022-02-21 18:00:00');
-insert into streamx.t_team_user values (1, 1, '2022-02-21 18:00:00');
+insert into streamx.t_team values (1,'bigdata','大数据组','2022-02-21 18:00:00');
+insert into streamx.t_team_user values (1, 1,'2022-02-21 18:00:00');
 
 
-ALTER TABLE `streamx`.`t_flink_app`
-    ADD COLUMN `TEAM_ID` bigint not null default 0 comment '任务所属组';
+ALTER TABLE `streamx`.`t_flink_app` ADD COLUMN `TEAM_ID` bigint not null default 0 comment '任务所属组';
 
 ALTER TABLE `streamx`.`t_flink_project`
     ADD COLUMN `TEAM_ID` bigint not null default 0 comment '项目所属组';
