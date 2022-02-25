@@ -19,6 +19,7 @@
 
 package com.streamxhub.streamx.flink.packer.pipeline.impl
 
+import com.streamxhub.streamx.common.conf.Workspace
 import com.streamxhub.streamx.common.enums.DevelopmentMode
 import com.streamxhub.streamx.common.fs.{FsOperator, LfsOperator}
 import com.streamxhub.streamx.common.util.Utils
@@ -35,8 +36,6 @@ import java.io.{File, FileInputStream, IOException}
  */
 class FlinkYarnApplicationBuildPipeline(request: FlinkYarnApplicationBuildRequest) extends BuildPipeline {
 
-  private[this] val fsOperator = FsOperator.hdfs
-
   /**
    * the type of pipeline
    */
@@ -51,7 +50,9 @@ class FlinkYarnApplicationBuildPipeline(request: FlinkYarnApplicationBuildReques
    */
   @throws[Throwable] override protected def buildProcess(): SimpleBuildResponse = {
     execStep(1) {
-      LfsOperator.mkCleanDirs(request.yarnProvidedPath)
+      if (request.developmentMode == DevelopmentMode.FLINKSQL) {
+        LfsOperator.mkCleanDirs(request.yarnProvidedPath)
+      }
       logInfo(s"recreate building workspace: ${request.yarnProvidedPath}")
     }.getOrElse(throw getError.exception)
 
@@ -66,30 +67,44 @@ class FlinkYarnApplicationBuildPipeline(request: FlinkYarnApplicationBuildReques
       }.getOrElse(throw getError.exception)
 
     execStep(3) {
-      mavenJars.foreach(jar => uploadToHdfs(jar, request.yarnProvidedPath))
+      mavenJars.foreach(jar => {
+        uploadToHdfs(FsOperator.lfs, jar, request.localWorkspace)
+        uploadToHdfs(FsOperator.hdfs, jar, request.yarnProvidedPath)
+      })
     }.getOrElse(throw getError.exception)
 
     SimpleBuildResponse()
   }
 
-  @throws[IOException] private[this] def uploadToHdfs(origin: String, target: String): Unit = {
+  @throws[IOException] private[this] def uploadToHdfs(fsOperator: FsOperator, origin: String, target: String): Unit = {
     val originFile = new File(origin)
     if (!fsOperator.exists(target)) {
       fsOperator.mkdirs(target)
     }
     if (originFile.isFile) {
-      val targetFile = s"$target/${originFile.getName}"
-      if (fsOperator.exists(targetFile)) {
-        Utils.tryWithResource(new FileInputStream(originFile))(inputStream => {
-          if (DigestUtils.md5Hex(inputStream) != fsOperator.fileMd5(targetFile)) {
-            fsOperator.upload(originFile.getAbsolutePath, targetFile)
+      // check file in upload dir
+      fsOperator match {
+        case FsOperator.lfs =>
+          fsOperator.copy(originFile.getAbsolutePath, target)
+        case FsOperator.hdfs =>
+          val uploadFile = s"${Workspace.remote.APP_UPLOADS}/${originFile.getName}"
+          if (fsOperator.exists(uploadFile)) {
+            Utils.tryWithResource(new FileInputStream(originFile))(inputStream => {
+              if (DigestUtils.md5Hex(inputStream) != fsOperator.fileMd5(uploadFile)) {
+                fsOperator.upload(originFile.getAbsolutePath, uploadFile)
+              }
+            })
+          } else {
+            fsOperator.upload(originFile.getAbsolutePath, uploadFile)
           }
-        })
-      } else {
-        fsOperator.upload(originFile.getAbsolutePath, targetFile)
+          // copy jar from upload dir to target dir
+          fsOperator.copy(uploadFile, target)
       }
     } else {
-      fsOperator.upload(originFile.getAbsolutePath, target)
+      fsOperator match {
+        case FsOperator.hdfs => fsOperator.upload(originFile.getAbsolutePath, target)
+        case _ =>
+      }
     }
   }
 
