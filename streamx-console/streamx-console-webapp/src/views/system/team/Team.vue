@@ -143,9 +143,6 @@ export default {
       sortedInfo = sortedInfo || {}
       filteredInfo = filteredInfo || {}
       return [{
-        title: 'Team ID',
-        dataIndex: 'teamId'
-      },{
         title: 'Team Code',
         dataIndex: 'teamCode'
       },  {
@@ -207,8 +204,7 @@ export default {
     },
     handleDelete (record) {
       remove({
-        teamId: record.teamId,
-        sortField: 'test'
+        teamId: record.teamId
       }).then((resp) => {
         if (resp.status === 'success') {
           this.$message.success('delete successful')

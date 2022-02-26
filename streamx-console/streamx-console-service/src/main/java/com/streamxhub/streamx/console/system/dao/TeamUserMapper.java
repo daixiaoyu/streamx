@@ -23,9 +23,14 @@ package com.streamxhub.streamx.console.system.dao;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.streamxhub.streamx.console.system.entity.TeamUser;
 
+import java.util.List;
+
 /**
  * @author daixinyu
  */
 public interface TeamUserMapper extends BaseMapper<TeamUser> {
 
+    void deleteByUserId(Long valueOf);
+
+    List<TeamUser> findTeamUserByUser(Long userId);
 }

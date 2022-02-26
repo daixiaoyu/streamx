@@ -34,6 +34,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -99,5 +100,15 @@ public class TeamUserServiceImpl extends ServiceImpl<TeamUserMapper, TeamUser> i
     public List<Long> getGroupIdList(Long userId) {
         List<TeamUser> groupIdList = getGroupUserList(userId);
         return groupIdList.stream().map(groupUser -> groupUser.getTeamId()).collect(Collectors.toList());
+    }
+
+    @Override
+    public void deleteTeamUsersByUserId(String[] userIds) {
+        Arrays.stream(userIds).forEach(id -> baseMapper.deleteByUserId(Long.valueOf(id)));
+    }
+
+    @Override
+    public List<TeamUser> findTeamUser(Long userId) {
+        return baseMapper.findTeamUserByUser(userId);
     }
 }

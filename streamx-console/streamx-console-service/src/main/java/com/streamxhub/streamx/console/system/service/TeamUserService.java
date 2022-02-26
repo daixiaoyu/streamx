@@ -39,4 +39,8 @@ public interface TeamUserService extends IService<TeamUser> {
     List<Long> getGroupIdList();
 
     List<Long> getGroupIdList(Long userId);
+
+    void deleteTeamUsersByUserId(String[] strings);
+
+    List<TeamUser> findTeamUser(Long userId);
 }

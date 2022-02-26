@@ -39,4 +39,6 @@ public class TeamUser {
     private Long userId;
 
     private Date createTime;
+
+    private transient String teamName;
 }

@@ -66,6 +66,25 @@
         </a-select>
       </a-form-item>
       <a-form-item
+        label="团队"
+        v-bind="formItemLayout">
+        <a-select
+          mode="multiple"
+          :allow-clear="true"
+          style="width: 100%"
+          v-decorator="[
+            'teamId',
+            {rules: [{ required: true, message: '请选择团队' }]}
+          ]">
+          <a-select-option
+            v-for="t in teamData"
+            :key="t.teamId.toString()">
+            {{ t.teamName }}
+          </a-select-option>
+        </a-select>
+      </a-form-item>
+
+      <a-form-item
         label="状态"
         v-bind="formItemLayout">
         <a-radio-group
@@ -124,6 +143,7 @@
 <script>
 import { mapState, mapMutations } from 'vuex'
 import { list as getRole } from '@/api/role'
+import { list as getTeam } from '@/api/team'
 import { update, get } from '@/api/user'
 
 const formItemLayout = {
@@ -147,6 +167,7 @@ export default {
         { 'value': 2, 'name': '外部用户' }
       ],
       roleData: [],
+      teamData: [],
       userId: '',
       loading: false
     }
@@ -184,6 +205,11 @@ export default {
         const roleArr = user.roleId.split(',')
         this.form.setFieldsValue({ 'roleId': roleArr })
       }
+      if (user.teamId) {
+        this.form.getFieldDecorator('teamId')
+        const teamArr = user.teamId.split(',')
+        this.form.setFieldsValue({ 'teamId': teamArr })
+      }
     },
     handleSubmit () {
       this.form.validateFields((err, values) => {
@@ -191,6 +217,7 @@ export default {
           this.loading = true
           const user = this.form.getFieldsValue()
           user.roleId = user.roleId.join(',')
+          user.teamId = user.teamId.join(',')
           user.userId = this.userId
           update(user).then((r) => {
             if (r.status === 'success') {
@@ -220,6 +247,11 @@ export default {
         getRole({ 'pageSize': '9999' }).then((resp) => {
           this.roleData = resp.data.records
         })
+
+        getTeam({ 'pageSize': '9999' }).then((resp) => {
+          this.teamData = resp.data.records
+        })
+
       }
     }
   }

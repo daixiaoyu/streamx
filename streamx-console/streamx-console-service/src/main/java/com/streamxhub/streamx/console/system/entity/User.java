@@ -106,6 +106,9 @@ public class User implements Serializable {
 
     private transient String id;
 
+    private transient String teamId;
+    private transient String teamName;
+
     // 盐值
     private String salt;
 

@@ -20,6 +20,8 @@
  */
 package com.streamxhub.streamx.console.system.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -34,6 +36,7 @@ import java.util.Date;
 @Slf4j
 public class Team {
 
+    @TableId(value = "TEAM_ID", type = IdType.AUTO)
     private Long teamId;
 
     private String teamCode;
@@ -41,8 +44,6 @@ public class Team {
     private String teamName;
 
     private Date createTime;
-
-
 
     // 排序字段
     private transient String sortField;
