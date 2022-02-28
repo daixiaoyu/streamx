@@ -104,7 +104,6 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project>
         RestResponse response = RestResponse.create();
         if (count == 0) {
             project.setDate(new Date());
-            project.setTeamId(groupUserService.getTopGroupIdByUser(serverComponent.getUser().getUserId()));
             boolean status = save(project);
             if (status) {
                 return response.message("添加项目成功").data(true);
@@ -138,7 +137,7 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project>
 
     @Override
     public IPage<Project> page(Project project, RestRequest request) {
-        List<Long> groupIdList = groupUserService.getGroupIdList();
+        List<Long> groupIdList = groupUserService.getTeamIdList();
         project.setTeamIdList(groupIdList);
         Page<Project> page = new Page<>();
         SortUtils.handlePageSort(request, page, "date", Constant.ORDER_DESC, false);

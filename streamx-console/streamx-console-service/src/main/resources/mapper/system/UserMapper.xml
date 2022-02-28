@@ -21,12 +21,9 @@
         SELECT a.*
         FROM
         t_user a
-
-
         <if test="user.teamId != null and user.teamId != ''">
             left join t_team_user b on a.user_id=b.user_id and b.team_id=#{user.teamId}
         </if>
-
         <where>
             <if test="user.username != null and user.username != ''">
                 AND username like '%${user.username}%'

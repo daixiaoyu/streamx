@@ -52,53 +52,14 @@ public class TeamUserServiceImpl extends ServiceImpl<TeamUserMapper, TeamUser> i
     private UserRoleService userRoleService;
 
     @Override
-    public List<TeamUser> getGroupUserList(Long userId) {
-
-        if (userRoleService.isAdmin(userId)) {
-            return new ArrayList<>();
-        }
-
-        QueryWrapper<TeamUser> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq(true, "user_id", userId);
-        List<TeamUser> list = list(queryWrapper);
-        if (null == list || list.size() == 0) {
-            throw new IllegalArgumentException("您未加入项目组，请联系管理员：代欣雨");
-        }
-        return list;
-    }
-
-
-    @Override
-    public Long getTopGroupIdByUser(Long userId) {
-        QueryWrapper<TeamUser> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq(true, "user_id", userId);
-        List<TeamUser> list = list(queryWrapper);
-        Boolean isAdmin = userRoleService.isAdmin(userId);
-        if (null == list || list.size() <= 0) {
-            if (isAdmin) {
-                return 0L;
-            }
-            throw new IllegalArgumentException("您未加入项目组，请联系管理员：代欣雨");
-        }
-        return list.get(0).getTeamId();
-    }
-
-
-    @Override
-    public List<TeamUser> getGroupUserList() {
+    public List<Long> getTeamIdList() {
         Long userId = serverComponent.getUser().getUserId();
-        return getGroupUserList(userId);
+        return getTeamIdList(userId);
     }
 
     @Override
-    public List<Long> getGroupIdList() {
-        Long userId = serverComponent.getUser().getUserId();
-        return getGroupIdList(userId);
-    }
-
-    @Override
-    public List<Long> getGroupIdList(Long userId) {
-        List<TeamUser> groupIdList = getGroupUserList(userId);
+    public List<Long> getTeamIdList(Long userId) {
+        List<TeamUser> groupIdList = findTeamUser(userId);
         return groupIdList.stream().map(groupUser -> groupUser.getTeamId()).collect(Collectors.toList());
     }
 
@@ -109,6 +70,9 @@ public class TeamUserServiceImpl extends ServiceImpl<TeamUserMapper, TeamUser> i
 
     @Override
     public List<TeamUser> findTeamUser(Long userId) {
+        if (userRoleService.isAdmin(userId)){
+            
+        }
         return baseMapper.findTeamUserByUser(userId);
     }
 }

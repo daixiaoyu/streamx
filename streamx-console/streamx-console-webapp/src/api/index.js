@@ -132,6 +132,7 @@ export default {
     POST: '/team/post',
     UPDATE: '/team/update',
     LIST: '/team/list',
+    LIST_BY_USER:'/team/listByUser',
     CHECK_NAME: '/team/check/name',
     CHECK_CODE: '/team/check/code',
     DELETE: '/team/delete',

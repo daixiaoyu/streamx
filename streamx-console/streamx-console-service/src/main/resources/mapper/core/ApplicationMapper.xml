@@ -95,7 +95,7 @@
             </if>
 
             <if test="application.teamIdList != null and application.teamIdList.size>0">
-                AND t.group_id IN
+                AND t.team_id IN
                 <foreach item="item" index="index" collection="application.teamIdList" open="("  close=")" separator=",">
                     #{item}
                 </foreach>

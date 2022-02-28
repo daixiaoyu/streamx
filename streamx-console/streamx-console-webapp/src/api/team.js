@@ -29,6 +29,10 @@ export function list (queryParam) {
   return http.post(api.Team.LIST, queryParam)
 }
 
+export function listByUser (queryParam) {
+  return http.post(api.Team.LIST_BY_USER, queryParam)
+}
+
 export function update (queryParam) {
   return http.put(api.Team.UPDATE, queryParam)
 }

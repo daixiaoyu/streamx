@@ -21,24 +21,27 @@
 package com.streamxhub.streamx.console.system.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.streamxhub.streamx.console.base.domain.RestRequest;
-import com.streamxhub.streamx.console.base.util.ShaHashUtils;
+import com.streamxhub.streamx.console.system.authentication.ServerComponent;
 import com.streamxhub.streamx.console.system.dao.TeamMapper;
 import com.streamxhub.streamx.console.system.entity.Team;
+import com.streamxhub.streamx.console.system.entity.TeamUser;
 import com.streamxhub.streamx.console.system.entity.User;
+import com.streamxhub.streamx.console.system.service.RoleService;
 import com.streamxhub.streamx.console.system.service.TeamService;
+import com.streamxhub.streamx.console.system.service.TeamUserService;
+import com.streamxhub.streamx.console.system.service.UserRoleService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author benjobs
@@ -47,6 +50,28 @@ import java.util.Date;
 @Service
 @Transactional(propagation = Propagation.SUPPORTS, readOnly = true, rollbackFor = Exception.class)
 public class TeamServiceImpl extends ServiceImpl<TeamMapper, Team> implements TeamService {
+
+    @Autowired
+    private ServerComponent serverComponent;
+
+    @Autowired
+    private TeamUserService teamUserService;
+
+    @Autowired
+    private UserRoleService userRoleService;
+
+    @Override
+    public IPage<Team> findTeamsByUser(Team team, RestRequest request) {
+        Long userId = serverComponent.getUser().getUserId();
+        if (userRoleService.isAdmin(userId)) {
+            List<Long> teamIdList = teamUserService.getTeamIdList(userId);
+            team.setTeamIdList(teamIdList);
+        }
+        Page<User> page = new Page<>();
+        page.setCurrent(request.getPageNum());
+        page.setSize(request.getPageSize());
+        return this.baseMapper.findTeamList(page, team);
+    }
 
 
     @Override

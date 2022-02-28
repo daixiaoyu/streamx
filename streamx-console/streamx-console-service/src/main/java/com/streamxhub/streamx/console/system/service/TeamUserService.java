@@ -30,15 +30,10 @@ import java.util.List;
  */
 public interface TeamUserService extends IService<TeamUser> {
 
-    List<TeamUser> getGroupUserList(Long userId);
 
-    Long getTopGroupIdByUser(Long userId);
+    List<Long> getTeamIdList();
 
-    List<TeamUser> getGroupUserList();
-
-    List<Long> getGroupIdList();
-
-    List<Long> getGroupIdList(Long userId);
+    List<Long> getTeamIdList(Long userId);
 
     void deleteTeamUsersByUserId(String[] strings);
 

@@ -33,8 +33,14 @@ public class TeamController {
 
     @PostMapping("list")
     @RequiresPermissions("team:view")
-    public RestResponse roleList(RestRequest restRequest, Team group) {
-        IPage<Team> groupList = teamService.findTeams(group, restRequest);
+    public RestResponse teamList(RestRequest restRequest, Team team) {
+        IPage<Team> groupList = teamService.findTeams(team, restRequest);
+        return RestResponse.create().data(groupList);
+    }
+
+    @PostMapping("/listByUser")
+    public RestResponse listByUser(RestRequest restRequest, Team team) {
+        IPage<Team> groupList = teamService.findTeamsByUser(team, restRequest);
         return RestResponse.create().data(groupList);
     }
 

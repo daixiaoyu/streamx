@@ -98,11 +98,13 @@ public class ApplicationController {
     public RestResponse list(Application app, RestRequest request) {
         IPage<Application> applicationList;
 
-        try {
-            applicationList = applicationService.page(app, request);
-        } catch (Exception e) {
-            return RestResponse.create().data(false).message(e.getMessage());
-        }
+        applicationList = applicationService.page(app, request);
+
+//        try {
+//
+//        } catch (Exception e) {
+//            return RestResponse.create().data(false).message(e.getMessage());
+//        }
 
         return RestResponse.create().data(applicationList);
     }

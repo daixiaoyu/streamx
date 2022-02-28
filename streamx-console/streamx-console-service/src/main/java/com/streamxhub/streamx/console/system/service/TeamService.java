@@ -30,6 +30,8 @@ import com.streamxhub.streamx.console.system.entity.Team;
  */
 public interface TeamService extends IService<Team> {
 
+    IPage<Team> findTeamsByUser(Team team, RestRequest request);
+
     IPage<Team> findTeams(Team group, RestRequest restRequest);
 
     void createTeam(Team team);

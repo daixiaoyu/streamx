@@ -22,11 +22,20 @@
             <if test="team.createTimeTo!= null and team.createTimeTo !=''">
                 And create_time &lt; #{team.createTimeTo}
             </if>
+
+            <if test="team.teamIdList != null and team.teamIdList.size>0">
+                AND team_id IN
+                <foreach item="item" index="index" collection="team.teamIdList" open="("  close=")" separator=",">
+                    #{item}
+                </foreach>
+            </if>
+
         </where>
         <if test="team.sortField != null and team.sortField != ''">
             order by ${team.sortField} ${team.sortOrder}
         </if>
 
     </select>
+
 
 </mapper>

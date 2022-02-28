@@ -154,9 +154,10 @@ import SvgIcon from '@/components/SvgIcon'
 
 
 import { list, remove, reset as resetPassword } from '@/api/user'
+import { listByUser as getUserTeam } from "@/api/team"
 import storage from '@/utils/storage'
 import {USER_NAME} from '@/store/mutation-types'
-import {list as getTeam} from "@/api/team";
+
 
 export default {
   name: 'User',
@@ -242,7 +243,7 @@ export default {
 
   mounted () {
     this.fetch()
-    getTeam(
+    getUserTeam(
       { 'pageSize': '9999' }
     ).then((resp) => {
       this.teamData = resp.data.records

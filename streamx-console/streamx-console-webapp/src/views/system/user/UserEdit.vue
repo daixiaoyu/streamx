@@ -143,7 +143,7 @@
 <script>
 import { mapState, mapMutations } from 'vuex'
 import { list as getRole } from '@/api/role'
-import { list as getTeam } from '@/api/team'
+import { listByUser as getUserTeam } from '@/api/team'
 import { update, get } from '@/api/user'
 
 const formItemLayout = {
@@ -248,7 +248,7 @@ export default {
           this.roleData = resp.data.records
         })
 
-        getTeam({ 'pageSize': '9999' }).then((resp) => {
+        getUserTeam({ 'pageSize': '9999' }).then((resp) => {
           this.teamData = resp.data.records
         })
 

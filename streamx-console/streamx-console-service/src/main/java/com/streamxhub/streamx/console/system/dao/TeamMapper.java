@@ -33,4 +33,5 @@ import org.apache.ibatis.annotations.Param;
 public interface TeamMapper extends BaseMapper<Team> {
 
     IPage<Team> findTeamList(Page<User> page,@Param("team") Team team);
+
 }

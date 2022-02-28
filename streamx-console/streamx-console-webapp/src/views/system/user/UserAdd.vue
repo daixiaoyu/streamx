@@ -145,7 +145,7 @@
 </template>
 <script>
 import { list as getRole } from '@/api/role'
-import { list as getTeam } from '@/api/team'
+import { listByUser as getUserTeam } from '@/api/team'
 import { checkUserName, post } from '@/api/user'
 
 const formItemLayout = {
@@ -241,7 +241,7 @@ export default {
           this.roleData = resp.data.records
         })
 
-        getTeam(
+        getUserTeam(
           { 'pageSize': '9999' }
         ).then((resp) => {
           this.teamData = resp.data.records

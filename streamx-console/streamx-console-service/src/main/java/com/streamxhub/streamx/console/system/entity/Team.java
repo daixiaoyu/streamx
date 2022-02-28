@@ -27,6 +27,7 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author benjobs
@@ -53,4 +54,5 @@ public class Team {
 
     private transient String createTimeFrom;
     private transient String createTimeTo;
+    private transient List<Long> teamIdList;
 }

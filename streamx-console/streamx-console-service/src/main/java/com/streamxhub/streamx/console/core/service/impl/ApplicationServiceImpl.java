@@ -420,7 +420,7 @@ public class ApplicationServiceImpl extends ServiceImpl<ApplicationMapper, Appli
     @Override
     public IPage<Application> page(Application appParam, RestRequest request) {
         Page<Application> page = new Page<>();
-        List<Long> groupIdList = groupUserService.getGroupIdList();
+        List<Long> groupIdList = groupUserService.getTeamIdList();
         appParam.setTeamIdList(groupIdList);
         SortUtils.handlePageSort(request, page, "create_time", Constant.ORDER_DESC, false);
         this.baseMapper.page(page, appParam);
@@ -527,7 +527,6 @@ public class ApplicationServiceImpl extends ServiceImpl<ApplicationMapper, Appli
     public boolean create(Application appParam) {
         Long userId = serverComponent.getUser().getUserId();
         appParam.setUserId(userId);
-        appParam.setTeamId(groupUserService.getTopGroupIdByUser(userId));
         appParam.setState(FlinkAppState.CREATED.getValue());
         appParam.setOptionState(OptionState.NONE.getValue());
         appParam.setCreateTime(new Date());
