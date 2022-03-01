@@ -57,6 +57,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     private MenuService menuService;
 
     @Autowired
+    private TeamService teamService;
+
+    @Autowired
     private TeamUserService teamUserService;
 
     @Override
@@ -81,9 +84,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                 u.setRoleName(roleNames);
 
 
-                List<TeamUser> teamUserList = teamUserService.findTeamUser(u.getUserId());
+                List<Team> teamUserList = teamService.findTeamByNowUser();
                 String teamIds = teamUserList.stream().map((iter) -> iter.getTeamId().toString()).collect(Collectors.joining(","));
-                String teamNames = teamUserList.stream().map(TeamUser::getTeamName).collect(Collectors.joining(","));
+                String teamNames = teamUserList.stream().map(Team::getTeamName).collect(Collectors.joining(","));
                 u.setTeamId(teamIds);
                 u.setTeamName(teamNames);
 

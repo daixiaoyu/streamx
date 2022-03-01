@@ -6,6 +6,10 @@
         <id column="team_id" property="teamId"/>
         <result column="user_id" property="userId"/>
     </resultMap>
+    <update id="selectTeamIdList">
+        select team_id
+        from t_team_user where user_id=#{userId}
+    </update>
 
 
     <!--根据用户Id删除该用户的角色关系-->
@@ -14,12 +18,5 @@
         FROM t_team_user
         WHERE user_id = #{userId}
     </delete>
-    <select id="findTeamUserByUser" resultType="com.streamxhub.streamx.console.system.entity.TeamUser">
 
-        select a.*,
-               b.team_name as teamName
-        from t_team_user a
-                 left join t_team b on a.team_id = b.team_id
-        where a.user_id=#{userId}
-    </select>
 </mapper>

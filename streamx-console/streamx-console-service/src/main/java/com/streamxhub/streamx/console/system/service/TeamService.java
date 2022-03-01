@@ -25,6 +25,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.streamxhub.streamx.console.base.domain.RestRequest;
 import com.streamxhub.streamx.console.system.entity.Team;
 
+import java.util.List;
+
 /**
  * @author benjobs
  */
@@ -39,4 +41,6 @@ public interface TeamService extends IService<Team> {
     Team findByName(String teamName);
 
     Team findByCode(String teamCode);
+
+    List<Team> findTeamByNowUser();
 }

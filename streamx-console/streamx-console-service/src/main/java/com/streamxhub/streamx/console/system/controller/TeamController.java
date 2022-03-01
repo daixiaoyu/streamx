@@ -40,8 +40,8 @@ public class TeamController {
 
     @PostMapping("/listByUser")
     public RestResponse listByUser(RestRequest restRequest, Team team) {
-        IPage<Team> groupList = teamService.findTeamsByUser(team, restRequest);
-        return RestResponse.create().data(groupList);
+        IPage<Team> teamList = teamService.findTeamsByUser(team, restRequest);
+        return RestResponse.create().data(teamList);
     }
 
     @PostMapping("post")

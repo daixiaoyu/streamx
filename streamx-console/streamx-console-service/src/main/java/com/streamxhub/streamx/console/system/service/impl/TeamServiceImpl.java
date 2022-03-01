@@ -40,8 +40,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author benjobs
@@ -61,15 +63,24 @@ public class TeamServiceImpl extends ServiceImpl<TeamMapper, Team> implements Te
     private UserRoleService userRoleService;
 
     @Override
+    public List<Team> findTeamByNowUser() {
+        IPage<Team> teamsByUser = findTeamsByUser(null, null);
+        return teamsByUser.getRecords();
+    }
+
+
+    @Override
     public IPage<Team> findTeamsByUser(Team team, RestRequest request) {
         Long userId = serverComponent.getUser().getUserId();
-        if (userRoleService.isAdmin(userId)) {
+        if (!userRoleService.isAdmin(userId)) {
             List<Long> teamIdList = teamUserService.getTeamIdList(userId);
             team.setTeamIdList(teamIdList);
         }
         Page<User> page = new Page<>();
-        page.setCurrent(request.getPageNum());
-        page.setSize(request.getPageSize());
+        if (null != request) {
+            page.setCurrent(request.getPageNum());
+            page.setSize(request.getPageSize());
+        }
         return this.baseMapper.findTeamList(page, team);
     }
 
@@ -99,4 +110,6 @@ public class TeamServiceImpl extends ServiceImpl<TeamMapper, Team> implements Te
     public Team findByCode(String teamCode) {
         return baseMapper.selectOne(new LambdaQueryWrapper<Team>().eq(Team::getTeamCode, teamCode));
     }
+
+
 }

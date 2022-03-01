@@ -48,8 +48,6 @@ public class TeamUserServiceImpl extends ServiceImpl<TeamUserMapper, TeamUser> i
 
     @Autowired
     private ServerComponent serverComponent;
-    @Autowired
-    private UserRoleService userRoleService;
 
     @Override
     public List<Long> getTeamIdList() {
@@ -59,20 +57,13 @@ public class TeamUserServiceImpl extends ServiceImpl<TeamUserMapper, TeamUser> i
 
     @Override
     public List<Long> getTeamIdList(Long userId) {
-        List<TeamUser> groupIdList = findTeamUser(userId);
-        return groupIdList.stream().map(groupUser -> groupUser.getTeamId()).collect(Collectors.toList());
+        return baseMapper.selectTeamIdList(userId);
     }
 
     @Override
+    @Transactional
     public void deleteTeamUsersByUserId(String[] userIds) {
         Arrays.stream(userIds).forEach(id -> baseMapper.deleteByUserId(Long.valueOf(id)));
     }
 
-    @Override
-    public List<TeamUser> findTeamUser(Long userId) {
-        if (userRoleService.isAdmin(userId)){
-            
-        }
-        return baseMapper.findTeamUserByUser(userId);
-    }
 }

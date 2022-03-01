@@ -32,5 +32,5 @@ public interface TeamUserMapper extends BaseMapper<TeamUser> {
 
     void deleteByUserId(Long valueOf);
 
-    List<TeamUser> findTeamUserByUser(Long userId);
+    List<Long> selectTeamIdList(Long userId);
 }
