@@ -33,7 +33,7 @@ import org.apache.flink.client.cli._
 import org.apache.flink.client.deployment.application.ApplicationConfiguration
 import org.apache.flink.client.program.{PackagedProgram, PackagedProgramUtils}
 import org.apache.flink.configuration._
-import org.apache.flink.runtime.jobgraph.SavepointConfigOptions
+import org.apache.flink.runtime.jobgraph.{JobGraph, SavepointConfigOptions}
 import org.apache.flink.util.Preconditions.checkNotNull
 
 import java.io.File
@@ -141,19 +141,23 @@ trait FlinkSubmitTrait extends Logger {
                 jarFile: File)(restApiFunc: (SubmitRequest, Configuration, File) => SubmitResponse)
                (jobGraphFunc: (SubmitRequest, Configuration, File) => SubmitResponse): SubmitResponse = {
     // Prioritize using Rest API submit while using JobGraph submit plan as backup
-    Try(restApiFunc(submitRequest, flinkConfig, jarFile))
-      .recover {
-        case _ =>
-          logInfo(s"[flink-submit] Rest API Submit Plan failed,try JobGraph Submit Plan now.")
-          jobGraphFunc(submitRequest, flinkConfig, jarFile)
-      } match {
-      case Success(submitResponse) => submitResponse
-      case Failure(ex) => throw ex
+    Try {
+      logInfo(s"[flink-submit] Attempting to submit in Rest API Submit Plan.")
+      restApiFunc(submitRequest, flinkConfig, jarFile)
+    }.getOrElse {
+      logWarn(s"[flink-submit] RestAPI Submit Plan failed,try JobGraph Submit Plan now.")
+      Try(jobGraphFunc(submitRequest, flinkConfig, jarFile)) match {
+        case Success(r) => r
+        case Failure(e) =>
+          logError(s"[flink-submit] Both Rest API Submit Plan and JobGraph Submit Plan failed.")
+          throw e
+      }
+
     }
   }
 
-  private[submit] def getPackageProgram(flinkConfig: Configuration, submitRequest: SubmitRequest, jarFile: File): PackagedProgram = {
-    PackagedProgram
+  private[submit] def getJobGraph(flinkConfig: Configuration, submitRequest: SubmitRequest, jarFile: File): (PackagedProgram, JobGraph) = {
+    val packageProgram = PackagedProgram
       .newBuilder
       .setSavepointRestoreSettings(submitRequest.savepointRestoreSettings)
       .setJarFile(jarFile)
@@ -163,6 +167,15 @@ trait FlinkSubmitTrait extends Logger {
           .getOptional(ApplicationConfiguration.APPLICATION_ARGS)
           .orElse(Lists.newArrayList()): _*
       ).build()
+
+    val jobGraph = PackagedProgramUtils.createJobGraph(
+      packageProgram,
+      flinkConfig,
+      getParallelism(submitRequest),
+      null,
+      false
+    )
+    packageProgram -> jobGraph
   }
 
   private[submit] def getJobID(jobId: String) = Try(JobID.fromHexString(jobId)) match {

@@ -564,7 +564,7 @@ public class ApplicationServiceImpl extends ServiceImpl<ApplicationMapper, Appli
             boolean needLaunch = false;
 
             if (application.isUploadJob()) {
-                if (!ObjectUtils.safeEquals(application.getJar(), application.getJar())) {
+                if (!ObjectUtils.safeEquals(application.getJar(), appParam.getJar())) {
                     application.setLaunch(LaunchState.NEED_LAUNCH_AFTER_BUILD.get());
                     needLaunch = true;
                 } else {
@@ -801,7 +801,13 @@ public class ApplicationServiceImpl extends ServiceImpl<ApplicationMapper, Appli
                 }
             }
         }
-
+        if (ExecutionMode.YARN_SESSION.equals(application.getExecutionModeEnum())) {
+            if (!application.getHotParamsMap().isEmpty()) {
+                if (application.getHotParamsMap().containsKey(ConfigConst.KEY_YARN_APP_ID())) {
+                    application.setYarnSessionClusterId(application.getHotParamsMap().get(ConfigConst.KEY_YARN_APP_ID()).toString());
+                }
+            }
+        }
         return application;
     }
 
@@ -871,6 +877,13 @@ public class ApplicationServiceImpl extends ServiceImpl<ApplicationMapper, Appli
                     URI activeAddress = cluster.getActiveAddress();
                     extraParameter.put(RestOptions.ADDRESS.key(), activeAddress.getHost());
                     extraParameter.put(RestOptions.PORT.key(), activeAddress.getPort());
+                }
+                if (ExecutionMode.isYarnSessionMode(application.getExecutionModeEnum())) {
+                    if (!application.getHotParamsMap().isEmpty()) {
+                        String yarnSessionClusterId = (String) application.getHotParamsMap().get(ConfigConst.KEY_YARN_APP_ID());
+                        assert yarnSessionClusterId != null;
+                        extraParameter.put(ConfigConst.KEY_YARN_APP_ID(), yarnSessionClusterId);
+                    }
                 }
 
                 StopRequest stopInfo = new StopRequest(
@@ -991,7 +1004,7 @@ public class ApplicationServiceImpl extends ServiceImpl<ApplicationMapper, Appli
                         ConfigConst.KEY_FLINK_APPLICATION_MAIN_CLASS(),
                         application.getMainClass()
                     );
-                    flinkUserJar = String.format("%s/%s", application.getAppHome(), application.getJar());
+                    flinkUserJar = String.format("%s/%s", application.getAppLib(), application.getJar());
                 } else {
                     switch (application.getApplicationType()) {
                         case STREAMX_FLINK:
@@ -1004,7 +1017,7 @@ public class ApplicationServiceImpl extends ServiceImpl<ApplicationMapper, Appli
                                 ConfigConst.KEY_FLINK_APPLICATION_MAIN_CLASS(),
                                 application.getMainClass()
                             );
-                            flinkUserJar = String.format("%s/%s", application.getAppHome(), application.getJar());
+                            flinkUserJar = String.format("%s/%s", application.getAppLib(), application.getJar());
                             break;
                         default:
                             throw new IllegalArgumentException("[StreamX] ApplicationType must be (StreamX flink | Apache flink)... ");
@@ -1022,6 +1035,7 @@ public class ApplicationServiceImpl extends ServiceImpl<ApplicationMapper, Appli
                 switch (executionMode) {
                     case REMOTE:
                     case YARN_PER_JOB:
+                    case YARN_SESSION:
                     case KUBERNETES_NATIVE_SESSION:
                     case KUBERNETES_NATIVE_APPLICATION:
                         flinkUserJar = Workspace.local().APP_CLIENT().concat("/").concat(sqlDistJar);
@@ -1038,7 +1052,8 @@ public class ApplicationServiceImpl extends ServiceImpl<ApplicationMapper, Appli
             }
 
             Map<String, Object> optionMap = application.getOptionMap();
-            if (ExecutionMode.YARN_APPLICATION.equals(application.getExecutionModeEnum())) {
+            if (ExecutionMode.YARN_APPLICATION.equals(application.getExecutionModeEnum())
+                || ExecutionMode.YARN_SESSION.equals(application.getExecutionModeEnum())) {
                 optionMap.putAll(application.getHotParamsMap());
             }
 
