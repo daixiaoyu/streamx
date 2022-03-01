@@ -430,7 +430,7 @@
         :label-col="{lg: {span: 5}, sm: {span: 7}}"
         :wrapper-col="{lg: {span: 16}, sm: {span: 17} }"
         v-show="executionMode !== 5 && executionMode !== 6">
-        <a-input-group compact>
+        <a-input-team compact>
           <a-input-number
             :min="1"
             :step="1"
@@ -463,7 +463,7 @@
               {{ o.name }}
             </a-select-option>
           </a-select>
-        </a-input-group>
+        </a-input-team>
 
         <p class="conf-desc" style="margin-bottom: -15px;margin-top: -3px">
           <span class="note-info" style="margin-bottom: 12px">
@@ -613,7 +613,7 @@
           placeholder="Please select the resource parameters to set"
           @change="handleChangeProcess"
           v-decorator="['totalOptions']">
-          <a-select-opt-group
+          <a-select-opt-team
             label="process memory(进程总内存)">
             <a-select-option
               v-for="(conf,index) in dynamicOptions('process-memory')"
@@ -621,8 +621,8 @@
               :value="conf.key">
               {{ conf.name }}
             </a-select-option>
-          </a-select-opt-group>
-          <a-select-opt-group
+          </a-select-opt-team>
+          <a-select-opt-team
             label="total memory(Flink 总内存)">
             <a-select-option
               v-for="(conf,index) in dynamicOptions('total-memory')"
@@ -630,7 +630,7 @@
               :value="conf.key">
               {{ conf.name }}
             </a-select-option>
-          </a-select-opt-group>
+          </a-select-opt-team>
         </a-select>
         <p class="conf-desc" style="margin-top: -3px">
           <span class="note-info">
@@ -1046,8 +1046,8 @@ export default {
 
   computed: {
     dynamicOptions() {
-      return function (group) {
-        return this.options.filter(x => x.group === group)
+      return function (team) {
+        return this.options.filter(x => x.team === team)
       }
     },
     hasOptions() {

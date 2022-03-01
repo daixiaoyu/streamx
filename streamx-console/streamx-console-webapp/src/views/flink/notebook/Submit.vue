@@ -137,7 +137,7 @@ export default {
         '// get input data by connecting to the socket\n' +
         'val text = env.socketTextStream(hostname, port, "\\n")\n' +
         '\n' +
-        '// parse the data, group it, window it, and aggregate the counts\n' +
+        '// parse the data, team it, window it, and aggregate the counts\n' +
         'val windowCounts = text.flatMap(new FlatMapFunction[String,(String,Long)] {\n' +
         '    override def flatMap(value: String, out: Collector[(String, Long)]): Unit = {\n' +
         '       for (word <- value.split("\\\\s")) {\n' +

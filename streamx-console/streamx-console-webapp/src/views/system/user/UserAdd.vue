@@ -8,7 +8,7 @@
     :visible="visible"
     style="height: calc(100% - 55px);overflow: auto;padding-bottom: 53px;">
     <template slot="title">
-      <a-icon type="user" />
+      <a-icon type="user"/>
       添加用户
     </template>
     <a-form
@@ -22,7 +22,7 @@
           @blur="handleUserNameBlur"
           v-decorator="
             ['username',
-             {rules: [{ required: true }]}]" />
+             {rules: [{ required: true }]}]"/>
       </a-form-item>
       <a-form-item
         label="Nick Name"
@@ -30,7 +30,7 @@
         :validate-status="validateStatus"
         :help="help">
         <a-input
-          v-decorator="['nickName',{rules: [{ required: true }]}]" />
+          v-decorator="['nickName',{rules: [{ required: true }]}]"/>
       </a-form-item>
       <a-form-item
         label="Password"
@@ -40,7 +40,7 @@
           v-decorator="['password',{rules: [
             { required: true, message: 'password is required'},
             { min: 8, message: 'Password length cannot be less than 8 characters'}
-          ]}]" />
+          ]}]"/>
       </a-form-item>
       <a-form-item
         label="Mail"
@@ -49,7 +49,7 @@
           v-decorator="['email',{rules: [
             { type: 'email', message: '请输入正确的邮箱' },
             { max: 50, message: '长度不能超过50个字符'}
-          ]}]" />
+          ]}]"/>
       </a-form-item>
       <a-form-item
         label="Mobile"
@@ -57,16 +57,17 @@
         <a-input
           v-decorator="['mobile', {rules: [
             { pattern: '^0?(13[0-9]|15[012356789]|17[013678]|18[0-9]|14[57])[0-9]{8}$', message: '请输入正确的手机号'}
-          ]}]" />
+          ]}]"/>
       </a-form-item>
+
       <a-form-item
         label="Role"
         v-bind="formItemLayout">
-        <a-select
-          mode="multiple"
-          :allow-clear="true"
-          style="width: 100%"
-          v-decorator="['roleId',{rules: [{ required: true, message: 'please select role' }]}]">
+        <a-select @change="handleRoleChange"
+                  mode="multiple"
+                  :allow-clear="true"
+                  style="width: 100%"
+                  v-decorator="['roleId',{rules: [{ required: true, message: 'please select role' }]}]">
           <a-select-option
             v-for="r in roleData"
             :key="r.roleId">
@@ -74,6 +75,23 @@
           </a-select-option>
         </a-select>
       </a-form-item>
+
+      <a-form-item v-if="needTeam==true"
+        label="Team"
+        v-bind="formItemLayout">
+        <a-select
+          mode="multiple"
+          :allow-clear="true"
+          style="width: 100%"
+          v-decorator="['teamId',{rules: [{ required: true, message: 'please select team' }]}]">
+          <a-select-option
+            v-for="t in teamData"
+            :key="t.teamId">
+            {{ t.teamName }}
+          </a-select-option>
+        </a-select>
+      </a-form-item>
+
       <a-form-item
         label="Status"
         v-bind="formItemLayout">
@@ -89,6 +107,7 @@
           </a-radio>
         </a-radio-group>
       </a-form-item>
+
       <a-form-item
         label="Gender"
         v-bind="formItemLayout">
@@ -125,12 +144,13 @@
   </a-drawer>
 </template>
 <script>
-import { list as getRole } from '@/api/role'
-import { checkUserName, post } from '@/api/user'
+import {list as getRole} from '@/api/role'
+import {listByUser as getUserTeam} from '@/api/team'
+import {checkUserName, post} from '@/api/user'
 
 const formItemLayout = {
-  labelCol: { span: 4 },
-  wrapperCol: { span: 18 }
+  labelCol: {span: 4},
+  wrapperCol: {span: 18}
 }
 export default {
   name: 'UserAdd',
@@ -140,34 +160,43 @@ export default {
       default: false
     }
   },
-  data () {
+  data() {
     return {
       loading: false,
       roleData: [],
+      teamData: [],
       formItemLayout,
       form: this.$form.createForm(this),
       validateStatus: '',
-      help: ''
+      help: '',
+      needTeam: true
     }
   },
   methods: {
-    reset () {
+    reset() {
       this.validateStatus = ''
       this.help = ''
       this.loading = false
       this.form.resetFields()
     },
-    onClose () {
+    onClose() {
       this.reset()
       this.$emit('close')
     },
-    handleSubmit () {
+    handleRoleChange() {
+      debugger
+      var roleId = this.form.getFieldValue("roleId")
+      this.form.setFieldsValue({'teamId': roleId})
+    },
+    handleSubmit() {
       if (this.validateStatus !== 'success') {
         this.handleUserNameBlur()
       }
       this.form.validateFields((err, user) => {
+        debugger
         if (!err && this.validateStatus === 'success') {
           user.roleId = user.roleId.join(',')
+          user.teamId = user.teamId.join(',')
           post({
             ...user
           }).then((r) => {
@@ -181,7 +210,7 @@ export default {
         }
       })
     },
-    handleUserNameBlur (e) {
+    handleUserNameBlur(e) {
       const username = (e && e.target.value) || ''
       if (username.length) {
         if (username.length > 20) {
@@ -211,12 +240,18 @@ export default {
     }
   },
   watch: {
-    visible () {
+    visible() {
       if (this.visible) {
         getRole(
-          { 'pageSize': '9999' }
+          {'pageSize': '9999'}
         ).then((resp) => {
           this.roleData = resp.data.records
+        })
+
+        getUserTeam(
+          {'pageSize': '9999'}
+        ).then((resp) => {
+          this.teamData = resp.data.records
         })
       }
     }

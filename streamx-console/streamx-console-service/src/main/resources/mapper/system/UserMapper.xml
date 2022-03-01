@@ -18,9 +18,12 @@
     </resultMap>
 
     <select id="findUserDetail" resultType="user" parameterType="user">
-        SELECT *
+        SELECT a.*
         FROM
-        t_user
+        t_user a
+        <if test="user.teamId != null and user.teamId != ''">
+            left join t_team_user b on a.user_id=b.user_id and b.team_id=#{user.teamId}
+        </if>
         <where>
             <if test="user.username != null and user.username != ''">
                 AND username like '%${user.username}%'
@@ -36,6 +39,10 @@
             </if>
             <if test="user.status != null and user.status != ''">
                 AND status = #{user.status}
+            </if>
+
+            <if test="user.teamId != null and user.teamId != ''">
+                and b.user_id is not null
             </if>
         </where>
         <if test="user.sortField != null and user.sortField != ''">

@@ -39,5 +39,52 @@ update `t_setting` set `NUM`= case when `NUM` > 4 then `NUM` - 2 else `NUM` - 1 
 
 update `t_flink_project` set `url`='https://gitee.com/streamxhub/streamx-quickstart.git' where `NAME`='streamx-quickstart';
 
+
+-- ----------------------------
+-- Table structure for t_group
+-- ----------------------------
+DROP TABLE IF EXISTS `streamx`.`t_team`;
+CREATE TABLE `streamx`.`t_team`
+(
+    `TEAM_ID`     bigint       NOT NULL AUTO_INCREMENT COMMENT 'ID',
+    `TEAM_CODE`   varchar(255) NOT NULL COMMENT '团队标识 后续可以用于队列 资源隔离相关',
+    `TEAM_NAME`   varchar(255) NOT NULL COMMENT '团队名',
+    `CREATE_TIME` datetime     NOT NULL COMMENT '创建时间',
+    PRIMARY KEY (`TEAM_ID`) USING BTREE,
+    UNIQUE KEY `TEAM_CODE` (TEAM_CODE) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
+DROP TABLE IF EXISTS `streamx`.`t_team_user`;
+CREATE TABLE `streamx`.`t_team_user`
+(
+    `TEAM_ID`    bigint   NOT NULL COMMENT 'teamId',
+    `USER_ID`     bigint   NOT NULL COMMENT 'userId',
+    `CREATE_TIME` datetime NOT NULL COMMENT '创建时间',
+    UNIQUE KEY `GROUP_USER` (`TEAM_ID`,`USER_ID`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
+insert into streamx.t_team values (1,'bigdata','大数据组','2022-02-21 18:00:00');
+insert into streamx.t_team_user values (1, 1,'2022-02-21 18:00:00');
+
+
+ALTER TABLE `streamx`.`t_flink_app` ADD COLUMN `TEAM_ID` bigint not null default 0 comment '任务所属组';
+
+ALTER TABLE `streamx`.`t_flink_project`
+    ADD COLUMN `TEAM_ID` bigint not null default 0 comment '项目所属组';
+
+INSERT INTO `t_menu` VALUES (37, 1, 'Team Management', '/system/team', 'system/team/Team', 'team:view', 'team', '0', '1', 1, NOW(), NULL);
+INSERT INTO `t_menu` VALUES (38, 37, 'add', NULL, NULL, 'team:add', NULL, '1', '1', NULL, NOW(), NULL);
+INSERT INTO `t_menu` VALUES (39, 37, 'update', NULL, NULL, 'team:update', NULL, '1', '1', NULL, NOW(), NULL);
+INSERT INTO `t_menu` VALUES (40, 37, 'delete', NULL, NULL, 'team:delete', NULL, '1', '1', NULL, NOW(), NULL);
+
+
+INSERT INTO `t_role_menu` VALUES (1, 37);
+INSERT INTO `t_role_menu` VALUES (1, 38);
+INSERT INTO `t_role_menu` VALUES (1, 39);
+INSERT INTO `t_role_menu` VALUES (1, 40);
+
+
 SET FOREIGN_KEY_CHECKS = 1;
 

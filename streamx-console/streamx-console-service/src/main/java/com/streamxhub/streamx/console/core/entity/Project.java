@@ -49,7 +49,7 @@ import java.util.*;
 public class Project implements Serializable {
     @TableId(value = "ID", type = IdType.AUTO)
     private Long id;
-    private Long groupId;
+    private Long teamId;
 
     private String name;
 
@@ -99,7 +99,7 @@ public class Project implements Serializable {
      */
     private transient String appSource;
 
-    private transient List<Long> groupIdList;
+    private transient List<Long> teamIdList;
 
     @JsonIgnore
     private transient SettingService settingService;

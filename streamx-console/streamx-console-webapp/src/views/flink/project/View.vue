@@ -4,7 +4,7 @@
       style="margin-top: 24px"
       :bordered="false">
       <div slot="extra">
-        <a-radio-group
+        <a-radio-team
           button-style="solid"
           default-value="">
           <a-radio-button
@@ -32,7 +32,7 @@
             value="2">
             Build Failed
           </a-radio-button>
-        </a-radio-group>
+        </a-radio-team>
         <a-input-search
           @search="handleSearch"
           style="margin-left: 16px; width: 272px;" />
