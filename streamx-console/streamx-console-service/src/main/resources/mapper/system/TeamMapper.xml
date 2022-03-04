@@ -13,7 +13,7 @@
         FROM
         t_team
         <where>
-            <if test="team.teamname != null and team.teamName != ''">
+            <if test="team.teamName != null and team.teamName != ''">
                 AND team_name like '%${team.teamName}%'
             </if>
             <if test="team.createTimeFrom != null and team.createTimeFrom !=''">

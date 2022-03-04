@@ -23,9 +23,11 @@ package com.streamxhub.streamx.console.system.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.streamxhub.streamx.console.system.authentication.ServerComponent;
 import com.streamxhub.streamx.console.system.dao.UserRoleMapper;
 import com.streamxhub.streamx.console.system.entity.UserRole;
 import com.streamxhub.streamx.console.system.service.UserRoleService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,6 +40,9 @@ import java.util.stream.Collectors;
 @Transactional(propagation = Propagation.SUPPORTS, readOnly = true, rollbackFor = Exception.class)
 public class UserRoleServiceImpl extends ServiceImpl<UserRoleMapper, UserRole>
     implements UserRoleService {
+
+    @Autowired
+    private ServerComponent serverComponent;
 
     @Override
     @Transactional
@@ -76,5 +81,22 @@ public class UserRoleServiceImpl extends ServiceImpl<UserRoleMapper, UserRole>
         queryWrapper.eq(true, "role_id", 1);
         List<UserRole> list = list(queryWrapper);
         return null != list && list.size() > 0;
+    }
+
+    @Override
+    public Boolean isAdmin(){
+        Long userId = serverComponent.getUser().getUserId();
+        return isAdmin(userId);
+    }
+
+    @Override
+    public List<Long> getRoleIdList() {
+        Long userId = serverComponent.getUser().getUserId();
+        return getRoleIdList(userId);
+    }
+
+    @Override
+    public List<Long> getRoleIdList(Long userId) {
+        return baseMapper.selectRoleIdList(userId);
     }
 }

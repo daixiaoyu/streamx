@@ -16,8 +16,12 @@
                 :label-col="{span: 4}"
                 :wrapper-col="{span: 18, offset: 2}">
                 <a-select
+                  v-model="queryParams.teamId"
                   :allow-clear="true"
-                  style="width: 100%"  v-model="queryParams.teamId">
+                  style="width: 100%" >
+                  <a-select-option key="" >
+                    All Team
+                  </a-select-option>
                   <a-select-option
                     v-for="t in teamData"
                     :key="t.teamId">
@@ -157,11 +161,12 @@ import { list, remove, reset as resetPassword } from '@/api/user'
 import { listByUser as getUserTeam } from "@/api/team"
 import storage from '@/utils/storage'
 import {USER_NAME} from '@/store/mutation-types'
+import TagSelectOption from "@/components/TagSelect/TagSelectOption";
 
 
 export default {
   name: 'User',
-  components: { UserInfo, UserAdd, UserEdit, RangeDate, SvgIcon },
+  components: {TagSelectOption, UserInfo, UserAdd, UserEdit, RangeDate, SvgIcon },
   data () {
     return {
       userInfo: {
@@ -242,12 +247,16 @@ export default {
   },
 
   mounted () {
-    this.fetch()
+
     getUserTeam(
       { 'pageSize': '9999' }
     ).then((resp) => {
       this.teamData = resp.data.records
+
+      this.search()
     })
+
+
   },
 
   methods: {

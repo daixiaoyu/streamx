@@ -51,6 +51,7 @@
         label="角色"
         v-bind="formItemLayout">
         <a-select
+          @change="handleRoleEdit"
           mode="multiple"
           :allow-clear="true"
           style="width: 100%"
@@ -66,6 +67,7 @@
         </a-select>
       </a-form-item>
       <a-form-item
+        v-if="!roles.includes('1')"
         label="团队"
         v-bind="formItemLayout">
         <a-select
@@ -142,7 +144,7 @@
 </template>
 <script>
 import { mapState, mapMutations } from 'vuex'
-import { list as getRole } from '@/api/role'
+import { listByUser as getRole } from '@/api/role'
 import { listByUser as getUserTeam } from '@/api/team'
 import { update, get } from '@/api/user'
 
@@ -169,7 +171,8 @@ export default {
       roleData: [],
       teamData: [],
       userId: '',
-      loading: false
+      loading: false,
+      roles:[]
     }
   },
 
@@ -203,6 +206,7 @@ export default {
       if (user.roleId) {
         this.form.getFieldDecorator('roleId')
         const roleArr = user.roleId.split(',')
+        this.roles = roleArr
         this.form.setFieldsValue({ 'roleId': roleArr })
       }
       if (user.teamId) {
@@ -210,6 +214,9 @@ export default {
         const teamArr = user.teamId.split(',')
         this.form.setFieldsValue({ 'teamId': teamArr })
       }
+    },
+    handleRoleEdit(v) {
+      this.roles=v
     },
     handleSubmit () {
       this.form.validateFields((err, values) => {

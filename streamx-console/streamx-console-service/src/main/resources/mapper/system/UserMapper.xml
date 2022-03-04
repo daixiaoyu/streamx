@@ -21,8 +21,8 @@
         SELECT a.*
         FROM
         t_user a
-        <if test="user.teamId != null and user.teamId != ''">
-            left join t_team_user b on a.user_id=b.user_id and b.team_id=#{user.teamId}
+        <if test="user.teamIdList != null and user.teamIdList.size>0">
+             join t_team_user b on a.user_id=b.user_id
         </if>
         <where>
             <if test="user.username != null and user.username != ''">
@@ -41,8 +41,14 @@
                 AND status = #{user.status}
             </if>
 
-            <if test="user.teamId != null and user.teamId != ''">
-                and b.user_id is not null
+            <if test="user.teamIdList != null and user.teamIdList.size>0">
+                AND b.team_id IN
+                <foreach item="item" index="index" collection="user.teamIdList" open="("  close=")" separator=",">
+                    #{item}
+                </foreach>
+
+                GROUP BY a.USER_ID
+
             </if>
         </where>
         <if test="user.sortField != null and user.sortField != ''">

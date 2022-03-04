@@ -42,6 +42,7 @@ public class Team {
 
     private String teamCode;
 
+    @TableId(value = "TEAM_NAME")
     private String teamName;
 
     private Date createTime;

@@ -36,4 +36,10 @@ public interface UserRoleService extends IService<UserRole> {
     List<Long> listRoleIdListByUserId(Long userId);
 
     Boolean isAdmin(Long userId);
+
+    Boolean isAdmin();
+
+    List<Long> getRoleIdList();
+
+    List<Long> getRoleIdList(Long userId);
 }

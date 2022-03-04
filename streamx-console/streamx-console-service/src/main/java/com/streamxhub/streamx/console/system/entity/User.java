@@ -31,6 +31,7 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @TableName("t_user")
@@ -109,6 +110,7 @@ public class User implements Serializable {
     private transient String teamId;
     private transient String teamName;
 
+    private transient List<Long> teamIdList;
     // 盐值
     private String salt;
 

@@ -23,6 +23,7 @@ package com.streamxhub.streamx.console.system.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.streamxhub.streamx.console.base.domain.RestRequest;
@@ -62,16 +63,31 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Autowired
     private TeamUserService teamUserService;
 
+
     @Override
     public User findByName(String username) {
         return baseMapper.selectOne(new LambdaQueryWrapper<User>().eq(User::getUsername, username));
     }
 
+
     @Override
     public IPage<User> findUserDetail(User user, RestRequest request) {
+
         Page<User> page = new Page<>();
         page.setCurrent(request.getPageNum());
         page.setSize(request.getPageSize());
+
+        // 如果用户有选择某个组，则只查询该组下的员工
+        if (StringUtils.isNotEmpty(user.getTeamId())) {
+            List<Long> teamIdList = new ArrayList<>();
+            teamIdList.add(Long.valueOf(user.getTeamId()));
+            user.setTeamIdList(teamIdList);
+        } else if (!userRoleService.isAdmin()) {
+            // 如果用户没有选择组，则只查询用户拥有权限的组
+            List<Long> teamIdList = teamUserService.getTeamIdList();
+            user.setTeamIdList(teamIdList);
+        }
+
         IPage<User> resPage = this.baseMapper.findUserDetail(page, user);
 
         if (resPage != null && !resPage.getRecords().isEmpty()) {
@@ -83,8 +99,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                 u.setRoleId(roleIds);
                 u.setRoleName(roleNames);
 
+                if (userRoleService.isAdmin(u.getUserId())) {
+                    u.setTeamId("0");
+                    u.setTeamName("All Team");
+                    return;
+                }
 
-                List<Team> teamUserList = teamService.findTeamByNowUser();
+                List<Team> teamUserList = teamService.findTeamByUser(u.getUserId());
                 String teamIds = teamUserList.stream().map((iter) -> iter.getTeamId().toString()).collect(Collectors.joining(","));
                 String teamNames = teamUserList.stream().map(Team::getTeamName).collect(Collectors.joining(","));
                 u.setTeamId(teamIds);

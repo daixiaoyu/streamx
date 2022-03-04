@@ -7,6 +7,7 @@ import com.streamxhub.streamx.console.base.exception.ServiceException;
 import com.streamxhub.streamx.console.system.entity.Team;
 import com.streamxhub.streamx.console.system.entity.User;
 import com.streamxhub.streamx.console.system.service.TeamService;
+import com.streamxhub.streamx.console.system.service.UserRoleService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +32,9 @@ public class TeamController {
     @Autowired
     private TeamService teamService;
 
+    @Autowired
+    private UserRoleService userRoleService;
+
     @PostMapping("list")
     @RequiresPermissions("team:view")
     public RestResponse teamList(RestRequest restRequest, Team team) {
@@ -40,7 +44,7 @@ public class TeamController {
 
     @PostMapping("/listByUser")
     public RestResponse listByUser(RestRequest restRequest, Team team) {
-        IPage<Team> teamList = teamService.findTeamsByUser(team, restRequest);
+        IPage<Team> teamList = teamService.findTeamsByNowUser(team, restRequest);
         return RestResponse.create().data(teamList);
     }
 

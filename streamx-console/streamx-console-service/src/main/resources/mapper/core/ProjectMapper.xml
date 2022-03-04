@@ -28,7 +28,7 @@
                 AND t.buildState = #{project.buildState}
             </if>
             <if test="project.teamIdList != null and project.teamIdList.size>0">
-                AND t.group_id IN
+                AND t.team_id IN
                 <foreach item="item" index="index" collection="project.teamIdList" open="("  close=")" separator=",">
                     #{item}
                 </foreach>

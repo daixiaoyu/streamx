@@ -124,6 +124,7 @@ export default {
     POST: '/role/post',
     UPDATE: '/role/update',
     LIST: '/role/list',
+    LIST_BY_USER:'/role/listByUser',
     CHECK_NAME: '/role/check/name',
     DELETE: '/role/delete',
     MENU: '/role/menu'

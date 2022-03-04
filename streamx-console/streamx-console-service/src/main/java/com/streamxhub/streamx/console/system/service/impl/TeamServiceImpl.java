@@ -63,15 +63,19 @@ public class TeamServiceImpl extends ServiceImpl<TeamMapper, Team> implements Te
     private UserRoleService userRoleService;
 
     @Override
-    public List<Team> findTeamByNowUser() {
-        IPage<Team> teamsByUser = findTeamsByUser(null, null);
+    public List<Team> findTeamByUser(Long userId) {
+        IPage<Team> teamsByUser = findTeamsByUser(userId, new Team(), null);
         return teamsByUser.getRecords();
+    }
+
+    @Override
+    public IPage<Team> findTeamsByNowUser(Team team, RestRequest request) {
+        return findTeamsByUser(serverComponent.getUser().getUserId(), team, request);
     }
 
 
     @Override
-    public IPage<Team> findTeamsByUser(Team team, RestRequest request) {
-        Long userId = serverComponent.getUser().getUserId();
+    public IPage<Team> findTeamsByUser(Long userId, Team team, RestRequest request) {
         if (!userRoleService.isAdmin(userId)) {
             List<Long> teamIdList = teamUserService.getTeamIdList(userId);
             team.setTeamIdList(teamIdList);
@@ -80,6 +84,8 @@ public class TeamServiceImpl extends ServiceImpl<TeamMapper, Team> implements Te
         if (null != request) {
             page.setCurrent(request.getPageNum());
             page.setSize(request.getPageSize());
+        } else {
+            page.setSize(9999);
         }
         return this.baseMapper.findTeamList(page, team);
     }

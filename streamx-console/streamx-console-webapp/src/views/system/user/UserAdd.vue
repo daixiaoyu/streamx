@@ -62,8 +62,9 @@
 
       <a-form-item
         label="Role"
-        v-bind="formItemLayout">
-        <a-select @change="handleRoleChange"
+        v-bind="formItemLayout" >
+        <a-select
+                  @change="handleRoleChange"
                   mode="multiple"
                   :allow-clear="true"
                   style="width: 100%"
@@ -75,8 +76,8 @@
           </a-select-option>
         </a-select>
       </a-form-item>
-
-      <a-form-item v-if="needTeam==true"
+      <a-form-item
+        v-if="!roles.includes('1')"
         label="Team"
         v-bind="formItemLayout">
         <a-select
@@ -144,7 +145,7 @@
   </a-drawer>
 </template>
 <script>
-import {list as getRole} from '@/api/role'
+import {listByUser as getRole} from '@/api/role'
 import {listByUser as getUserTeam} from '@/api/team'
 import {checkUserName, post} from '@/api/user'
 
@@ -169,7 +170,7 @@ export default {
       form: this.$form.createForm(this),
       validateStatus: '',
       help: '',
-      needTeam: true
+      roles:[]
     }
   },
   methods: {
@@ -183,17 +184,14 @@ export default {
       this.reset()
       this.$emit('close')
     },
-    handleRoleChange() {
-      debugger
-      var roleId = this.form.getFieldValue("roleId")
-      this.form.setFieldsValue({'teamId': roleId})
+    handleRoleChange(v) {
+      this.roles=v
     },
     handleSubmit() {
       if (this.validateStatus !== 'success') {
         this.handleUserNameBlur()
       }
       this.form.validateFields((err, user) => {
-        debugger
         if (!err && this.validateStatus === 'success') {
           user.roleId = user.roleId.join(',')
           user.teamId = user.teamId.join(',')

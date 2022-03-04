@@ -6,10 +6,10 @@
         <id column="team_id" property="teamId"/>
         <result column="user_id" property="userId"/>
     </resultMap>
-    <update id="selectTeamIdList">
+    <select id="selectTeamIdList" resultType="java.lang.Long">
         select team_id
         from t_team_user where user_id=#{userId}
-    </update>
+    </select>
 
 
     <!--根据用户Id删除该用户的角色关系-->
