@@ -29,6 +29,7 @@ public class RestResponse extends HashMap<String, Object> {
 
     private static final long serialVersionUID = -8713837118340960775L;
 
+
     public static RestResponse create() {
         return new RestResponse();
     }
@@ -40,6 +41,12 @@ public class RestResponse extends HashMap<String, Object> {
 
     public RestResponse data(Object data) {
         this.put("data", data);
+        return this;
+    }
+
+    public RestResponse error(String message){
+        this.put("status","error");
+        this.put("message",message);
         return this;
     }
 

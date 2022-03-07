@@ -85,4 +85,6 @@ public interface ApplicationService extends IService<Application> {
     Boolean delete(Application app);
 
     boolean checkEnv(Application app) throws Exception;
+
+    Long getCountByTeam(Long teamId);
 }

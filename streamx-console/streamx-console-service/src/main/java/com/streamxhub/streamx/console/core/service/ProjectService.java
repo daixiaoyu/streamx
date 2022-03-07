@@ -59,4 +59,5 @@ public interface ProjectService extends IService<Project> {
 
     boolean checkExists(Project project);
 
+    Long getCountByTeam(Long teamId);
 }

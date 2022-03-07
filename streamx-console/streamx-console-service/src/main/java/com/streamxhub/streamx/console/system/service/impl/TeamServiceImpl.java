@@ -25,6 +25,9 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.streamxhub.streamx.console.base.domain.RestRequest;
+import com.streamxhub.streamx.console.base.domain.RestResponse;
+import com.streamxhub.streamx.console.core.service.ApplicationService;
+import com.streamxhub.streamx.console.core.service.ProjectService;
 import com.streamxhub.streamx.console.system.authentication.ServerComponent;
 import com.streamxhub.streamx.console.system.dao.TeamMapper;
 import com.streamxhub.streamx.console.system.entity.Team;
@@ -62,10 +65,34 @@ public class TeamServiceImpl extends ServiceImpl<TeamMapper, Team> implements Te
     @Autowired
     private UserRoleService userRoleService;
 
+    @Autowired
+    private ProjectService projectService;
+
+    @Autowired
+    private ApplicationService applicationService;
+
     @Override
     public List<Team> findTeamByUser(Long userId) {
         IPage<Team> teamsByUser = findTeamsByUser(userId, new Team(), null);
         return teamsByUser.getRecords();
+    }
+
+    @Override
+    public String deleteTeamBeforeCheck(Long teamId) {
+        Long userCount = teamUserService.getCountByTeam(teamId);
+        if (userCount > 0) {
+            return "团队中存在用户，不能删除";
+        }
+        Long projectCount = projectService.getCountByTeam(teamId);
+        if (projectCount > 0) {
+            return "团队中存在项目，不能删除";
+        }
+        Long applicationCount = applicationService.getCountByTeam(teamId);
+        if (applicationCount > 0) {
+            return "团队中存在任务，不能删除";
+        }
+        removeById(teamId);
+        return "success";
     }
 
     @Override

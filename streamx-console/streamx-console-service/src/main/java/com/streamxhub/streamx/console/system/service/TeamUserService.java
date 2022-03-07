@@ -37,4 +37,5 @@ public interface TeamUserService extends IService<TeamUser> {
 
     void deleteTeamUsersByUserId(String[] strings);
 
+    Long getCountByTeam(Long teamId);
 }

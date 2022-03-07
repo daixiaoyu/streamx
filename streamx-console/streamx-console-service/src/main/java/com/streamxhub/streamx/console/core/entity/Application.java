@@ -246,6 +246,7 @@ public class Application implements Serializable {
     private transient String backUpDescription;
 
     private transient List<Long> teamIdList;
+    private transient String teamName;
 
     /**
      * Flink Web UI Url

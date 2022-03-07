@@ -53,4 +53,5 @@ public interface ApplicationMapper extends BaseMapper<Application> {
     @Update("update t_flink_app set option_state=0")
     void resetOptionState();
 
+    Long getCountByTeam(@Param("teamId") Long teamId);
 }

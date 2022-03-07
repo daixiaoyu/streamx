@@ -22,6 +22,7 @@ package com.streamxhub.streamx.console.system.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.streamxhub.streamx.console.system.entity.TeamUser;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -33,4 +34,6 @@ public interface TeamUserMapper extends BaseMapper<TeamUser> {
     void deleteByUserId(Long valueOf);
 
     List<Long> selectTeamIdList(Long userId);
+
+    Long getCountByTeam(@Param("teamId") Long teamId);
 }

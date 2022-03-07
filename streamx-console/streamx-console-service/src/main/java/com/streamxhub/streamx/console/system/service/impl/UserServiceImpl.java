@@ -28,6 +28,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.streamxhub.streamx.console.base.domain.RestRequest;
 import com.streamxhub.streamx.console.base.util.ShaHashUtils;
+import com.streamxhub.streamx.console.system.authentication.ServerComponent;
 import com.streamxhub.streamx.console.system.dao.UserMapper;
 import com.streamxhub.streamx.console.system.entity.*;
 import com.streamxhub.streamx.console.system.service.*;
@@ -63,6 +64,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Autowired
     private TeamUserService teamUserService;
 
+    @Autowired
+    private ServerComponent serverComponent;
+
 
     @Override
     public User findByName(String username) {
@@ -77,12 +81,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         page.setCurrent(request.getPageNum());
         page.setSize(request.getPageSize());
 
+        Long nowUser = serverComponent.getUser().getUserId();
+
         // 如果用户有选择某个组，则只查询该组下的员工
         if (StringUtils.isNotEmpty(user.getTeamId())) {
             List<Long> teamIdList = new ArrayList<>();
             teamIdList.add(Long.valueOf(user.getTeamId()));
             user.setTeamIdList(teamIdList);
-        } else if (!userRoleService.isAdmin()) {
+        } else if (!userRoleService.isAdmin(nowUser)) {
             // 如果用户没有选择组，则只查询用户拥有权限的组
             List<Long> teamIdList = teamUserService.getTeamIdList();
             user.setTeamIdList(teamIdList);
@@ -93,6 +99,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         if (resPage != null && !resPage.getRecords().isEmpty()) {
             List<User> users = resPage.getRecords();
             users.forEach(u -> {
+                if (u.getUserId().equals(nowUser)){
+                    u.setIsNow(true);
+                }
+
                 List<Role> roleList = roleService.findUserRole(u.getUsername());
                 String roleIds = roleList.stream().map((iter) -> iter.getRoleId().toString()).collect(Collectors.joining(","));
                 String roleNames = roleList.stream().map(Role::getRoleName).collect(Collectors.joining(","));
@@ -104,6 +114,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                     u.setTeamName("All Team");
                     return;
                 }
+
 
                 List<Team> teamUserList = teamService.findTeamByUser(u.getUserId());
                 String teamIds = teamUserList.stream().map((iter) -> iter.getTeamId().toString()).collect(Collectors.joining(","));

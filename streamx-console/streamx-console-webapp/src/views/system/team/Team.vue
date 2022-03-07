@@ -206,11 +206,11 @@ export default {
       remove({
         teamId: record.teamId
       }).then((resp) => {
-        if (resp.status === 'success') {
+        if (resp.message === 'success') {
           this.$message.success('delete successful')
           this.search()
         } else {
-          this.$message.error('delete failed')
+          this.$message.error(resp.message)
         }
       })
 

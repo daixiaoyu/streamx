@@ -66,4 +66,9 @@ public class TeamUserServiceImpl extends ServiceImpl<TeamUserMapper, TeamUser> i
         Arrays.stream(userIds).forEach(id -> baseMapper.deleteByUserId(Long.valueOf(id)));
     }
 
+    @Override
+    public Long getCountByTeam(Long teamId) {
+        return baseMapper.getCountByTeam(teamId);
+    }
+
 }

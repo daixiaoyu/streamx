@@ -405,6 +405,11 @@ public class ApplicationServiceImpl extends ServiceImpl<ApplicationMapper, Appli
         }
     }
 
+    @Override
+    public Long getCountByTeam(Long teamId) {
+        return baseMapper.getCountByTeam(teamId);
+    }
+
     @RefreshCache
     private void updateState(Application application, FlinkAppState state) {
         application.setState(state.getValue());

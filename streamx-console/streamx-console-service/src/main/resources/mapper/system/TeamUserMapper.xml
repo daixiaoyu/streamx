@@ -10,6 +10,9 @@
         select team_id
         from t_team_user where user_id=#{userId}
     </select>
+    <select id="getCountByTeam" resultType="java.lang.Long">
+        select count(1) as count from t_team_user where team_id=#{teamId}
+    </select>
 
 
     <!--根据用户Id删除该用户的角色关系-->

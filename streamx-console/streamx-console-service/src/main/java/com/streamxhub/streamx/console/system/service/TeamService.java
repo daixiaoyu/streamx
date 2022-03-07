@@ -32,6 +32,8 @@ import java.util.List;
  */
 public interface TeamService extends IService<Team> {
 
+    String deleteTeamBeforeCheck(Long teamId);
+
     IPage<Team> findTeamsByNowUser(Team team, RestRequest request);
 
     IPage<Team> findTeamsByUser(Long userId, Team team, RestRequest request);

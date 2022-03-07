@@ -32,8 +32,6 @@ public class TeamController {
     @Autowired
     private TeamService teamService;
 
-    @Autowired
-    private UserRoleService userRoleService;
 
     @PostMapping("list")
     @RequiresPermissions("team:view")
@@ -57,9 +55,9 @@ public class TeamController {
 
     @DeleteMapping("delete")
     @RequiresPermissions("team:delete")
-    public RestResponse deleteTeam(Long teamId) throws ServiceException {
-        this.teamService.removeById(teamId);
-        return RestResponse.create();
+    public RestResponse deleteTeam(Long teamId) {
+        String result = this.teamService.deleteTeamBeforeCheck(teamId);
+        return RestResponse.create().message(result);
     }
 
     @PostMapping("check/name")

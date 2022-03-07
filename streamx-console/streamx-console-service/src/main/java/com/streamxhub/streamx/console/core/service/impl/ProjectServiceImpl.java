@@ -315,6 +315,11 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project>
     }
 
     @Override
+    public Long getCountByTeam(Long teamId) {
+        return baseMapper.getCountByTeam(teamId);
+    }
+
+    @Override
     public List<Map<String, Object>> listConf(Project project) {
         try {
             File file = new File(project.getDistHome(), project.getModule());
