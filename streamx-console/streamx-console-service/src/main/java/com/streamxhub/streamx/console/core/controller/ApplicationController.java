@@ -97,15 +97,7 @@ public class ApplicationController {
     @RequiresPermissions("app:view")
     public RestResponse list(Application app, RestRequest request) {
         IPage<Application> applicationList;
-
         applicationList = applicationService.page(app, request);
-
-//        try {
-//
-//        } catch (Exception e) {
-//            return RestResponse.create().data(false).message(e.getMessage());
-//        }
-
         return RestResponse.create().data(applicationList);
     }
 

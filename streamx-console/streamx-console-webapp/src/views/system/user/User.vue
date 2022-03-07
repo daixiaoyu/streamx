@@ -158,10 +158,10 @@ import SvgIcon from '@/components/SvgIcon'
 
 
 import { list, remove, reset as resetPassword } from '@/api/user'
-import { listByUser as getUserTeam } from "@/api/team"
+import { listByUser as getUserTeam } from '@/api/team'
 import storage from '@/utils/storage'
 import {USER_NAME} from '@/store/mutation-types'
-import TagSelectOption from "@/components/TagSelect/TagSelectOption";
+import TagSelectOption from '@/components/TagSelect/TagSelectOption'
 
 
 export default {
@@ -247,16 +247,12 @@ export default {
   },
 
   mounted () {
-
     getUserTeam(
       { 'pageSize': '9999' }
     ).then((resp) => {
       this.teamData = resp.data.records
-
       this.search()
     })
-
-
   },
 
   methods: {

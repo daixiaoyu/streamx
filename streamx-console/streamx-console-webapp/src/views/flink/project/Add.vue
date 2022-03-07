@@ -5,6 +5,24 @@
     <a-form
       @submit="handleSubmit"
       :form="form">
+
+      <a-form-item
+        label="Team"
+        :label-col="{lg: {span: 5}, sm: {span: 7}}"
+        :wrapper-col="{lg: {span: 16}, sm: {span: 17} }">
+        <a-select
+          :allow-clear="true"
+          @change="handleTeamEdit"
+          v-decorator="['teamId',{rules: [{ required: true, message: 'please select team' }]}]">
+          <a-select-option
+            v-for="t in teamData"
+            :key="t.teamId">
+            {{ t.teamName }}
+          </a-select-option>
+        </a-select>
+      </a-form-item>
+
+
       <a-form-item
         label="Project Name"
         :label-col="{lg: {span: 5}, sm: {span: 7}}"
@@ -12,8 +30,9 @@
         <a-input
           type="text"
           placeholder="the project name"
-          v-decorator="['name',{ rules: [{ validator: handleCheckName,required: true}]}]" />
+          v-decorator="['name',{ rules: [{ validator: handleCheckName,required: true}]}]"/>
       </a-form-item>
+
 
       <a-form-item
         label="Project Type"
@@ -68,7 +87,7 @@
           placeholder="The Repository URL for this project"
           @change="handleSchema"
           @blur="handleBranches"
-          v-decorator="['url',{ rules: [{ required: true, message: 'Repository URL is required'} ]}]" />
+          v-decorator="['url',{ rules: [{ required: true, message: 'Repository URL is required'} ]}]"/>
       </a-form-item>
 
       <a-form-item
@@ -79,7 +98,7 @@
           type="text"
           placeholder="UserName for this project"
           @blur="handleBranches"
-          v-decorator="['username']" />
+          v-decorator="['username']"/>
       </a-form-item>
 
       <a-form-item
@@ -90,7 +109,7 @@
           type="password"
           @blur="handleBranches"
           placeholder="Password for this project"
-          v-decorator="['password']" />
+          v-decorator="['password']"/>
       </a-form-item>
 
       <a-form-item
@@ -120,7 +139,7 @@
         <a-input
           type="text"
           placeholder="By default,lookup pom.xml in root path,You can manually specify the module to compile pom.xml"
-          v-decorator="['pom',{ rules: [{ message: 'Specifies the module to compile pom.xml If it is not specified, it is found under the root path pom.xml' } ]}]" />
+          v-decorator="['pom',{ rules: [{ message: 'Specifies the module to compile pom.xml If it is not specified, it is found under the root path pom.xml' } ]}]"/>
       </a-form-item>
 
       <a-form-item
@@ -131,7 +150,7 @@
           rows="4"
           name="description"
           placeholder="Description for this project"
-          v-decorator="['description']" />
+          v-decorator="['description']"/>
       </a-form-item>
 
       <a-form-item
@@ -154,53 +173,71 @@
 
 <script>
 
-import { create,branches,gitcheck,exists } from '@api/project'
+import {create, branches, gitcheck, exists} from '@api/project'
+import {listByUser as getUserTeam} from '@/api/team'
 
 export default {
   name: 'BaseForm',
-  data () {
+  data() {
     return {
       brancheList: [],
       searchBranche: false,
+      teamData: [],
+      teamId: '',
       options: {
         repository: [
-          { id: 1, name: 'GitHub/GitLab', default: true },
-          { id: 2, name: 'Subversion', default: false }
+          {id: 1, name: 'GitHub/GitLab', default: true},
+          {id: 2, name: 'Subversion', default: false}
         ],
         types: [
-          {id: 1, name: 'apache flink',default: true },
-          {id: 2, name: 'apache spark',default: false }
+          {id: 1, name: 'apache flink', default: true},
+          {id: 2, name: 'apache spark', default: false}
         ]
       }
     }
   },
 
-  beforeMount () {
+  beforeMount() {
     this.form = this.$form.createForm(this)
+  },
+  mounted() {
+    getUserTeam(
+      {'pageSize': '9999'}
+    ).then((resp) => {
+      this.teamData = resp.data.records
+    })
   },
   methods: {
 
-    filterOption (input, option) {
+    filterOption(input, option) {
       return option.componentOptions.children[0].text.toLowerCase().indexOf(input.toLowerCase()) >= 0
     },
 
-    handleResp (selected) {
+    handleResp(selected) {
       this.repository = selected
     },
 
-    handleType (selected) {
+    handleType(selected) {
       this.types = selected
     },
-
-    handleSchema () {
+    handleTeamEdit(v) {
+      this.teamId = v
+    },
+    handleSchema() {
       console.log(this.url)
     },
 
     handleCheckName(rule, value, callback) {
+      debugger
+      if (this.teamId === null || this.teamId === undefined || this.teamId === '') {
+        callback(new Error('Please select team to check project name'))
+        return
+      }
+
       if (value === null || value === undefined || value === '') {
         callback(new Error('The Project Name is required'))
       } else {
-        exists({ name: value }).then((resp) => {
+        exists({name: value, teamId: this.teamId}).then((resp) => {
           const flag = resp.data
           if (flag) {
             callback(new Error('The Project Name is already exists. Please check'))
@@ -210,6 +247,7 @@ export default {
         })
       }
     },
+
 
     // handler
     handleSubmit: function (e) {
@@ -222,7 +260,7 @@ export default {
             username: values.username || null,
             password: values.password || null,
           }).then((resp) => {
-            if ( resp.data === 0 ) {
+            if (resp.data === 0) {
               if (this.brancheList.length === 0) {
                 this.handleBranches()
               }
@@ -242,11 +280,12 @@ export default {
                   username: values.username,
                   password: values.password,
                   pom: values.pom,
-                  description: values.description
+                  description: values.description,
+                  teamId: values.teamId
                 }).then((resp) => {
                   const created = resp.data
                   if (created) {
-                    this.$router.push({ path: '/flink/project' })
+                    this.$router.push({path: '/flink/project'})
                   } else {
                     this.$swal.fire(
                       'Failed',
@@ -261,9 +300,9 @@ export default {
             } else {
               this.$swal.fire(
                 'Failed',
-                (resp.data === 1?
-                  'not authorized ..>﹏<.. <br><br> username and password is required'
-                  : 'authentication error ..>﹏<.. <br><br> please check username and password'
+                (resp.data === 1 ?
+                    'not authorized ..>﹏<.. <br><br> username and password is required'
+                    : 'authentication error ..>﹏<.. <br><br> please check username and password'
                 ),
                 'error'
               )
@@ -282,10 +321,10 @@ export default {
         const password = form.getFieldValue('password') || null
         const userNull = username === null || username === undefined || username === ''
         const passNull = password === null || password === undefined || password === ''
-        if ( (userNull && passNull) || (!userNull && !passNull) ) {
+        if ((userNull && passNull) || (!userNull && !passNull)) {
           branches({
             url: url,
-            username: username ,
+            username: username,
             password: password
           }).then((resp) => {
             this.brancheList = resp.data
@@ -298,7 +337,7 @@ export default {
       }
     },
 
-    handleGoBack () {
+    handleGoBack() {
       this.$router.go(-1)
     }
   }

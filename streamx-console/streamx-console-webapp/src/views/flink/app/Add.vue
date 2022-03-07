@@ -430,7 +430,7 @@
         :label-col="{lg: {span: 5}, sm: {span: 7}}"
         :wrapper-col="{lg: {span: 16}, sm: {span: 17} }"
         v-show="executionMode !== 5 && executionMode !== 6">
-        <a-input-team compact>
+        <a-input-group compact>
           <a-input-number
             :min="1"
             :step="1"
@@ -463,14 +463,14 @@
               {{ o.name }}
             </a-select-option>
           </a-select>
-        </a-input-team>
+        </a-input-group>
 
         <p class="conf-desc" style="margin-bottom: -15px;margin-top: -3px">
           <span class="note-info" style="margin-bottom: 12px">
             <a-tag color="#2db7f5" class="tag-note">Note</a-tag>
             Operation after checkpoint failure, e.g:<br>
             Within <span class="note-elem">5 minutes</span>(checkpoint failure rate interval), if the number of checkpoint failures reaches <span
-              class="note-elem">10</span> (max failures per interval),action will be triggered(alert or restart job)
+            class="note-elem">10</span> (max failures per interval),action will be triggered(alert or restart job)
           </span>
         </p>
       </a-form-item>
@@ -613,7 +613,7 @@
           placeholder="Please select the resource parameters to set"
           @change="handleChangeProcess"
           v-decorator="['totalOptions']">
-          <a-select-opt-team
+          <a-select-opt-group
             label="process memory(进程总内存)">
             <a-select-option
               v-for="(conf,index) in dynamicOptions('process-memory')"
@@ -621,8 +621,8 @@
               :value="conf.key">
               {{ conf.name }}
             </a-select-option>
-          </a-select-opt-team>
-          <a-select-opt-team
+          </a-select-opt-group>
+          <a-select-opt-group
             label="total memory(Flink 总内存)">
             <a-select-option
               v-for="(conf,index) in dynamicOptions('total-memory')"
@@ -630,7 +630,7 @@
               :value="conf.key">
               {{ conf.name }}
             </a-select-option>
-          </a-select-opt-team>
+          </a-select-opt-group>
         </a-select>
         <p class="conf-desc" style="margin-top: -3px">
           <span class="note-info">
@@ -1046,8 +1046,8 @@ export default {
 
   computed: {
     dynamicOptions() {
-      return function (team) {
-        return this.options.filter(x => x.team === team)
+      return function (group) {
+        return this.options.filter(x => x.group === group)
       }
     },
     hasOptions() {
@@ -1287,9 +1287,9 @@ export default {
         })
       } else {
         this.$swal.fire(
-            'Failed',
-            'Please select "execution Mode" first',
-            'error'
+          'Failed',
+          'Please select "execution Mode" first',
+          'error'
         )
       }
     },

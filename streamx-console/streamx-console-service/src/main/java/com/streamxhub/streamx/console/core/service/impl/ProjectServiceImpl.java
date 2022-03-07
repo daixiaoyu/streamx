@@ -80,8 +80,6 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project>
     @Autowired
     private TeamUserService groupUserService;
 
-    @Autowired
-    private ServerComponent serverComponent;
 
     @Autowired
     private SimpMessageSendingOperations simpMessageSendingOperations;
@@ -98,10 +96,14 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project>
 
     @Override
     public RestResponse create(Project project) {
+        RestResponse response = RestResponse.create();
+        if (project.getTeamId() == null) {
+            return response.message("请选择团队").data(false);
+        }
         QueryWrapper<Project> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda().eq(Project::getName, project.getName());
+        queryWrapper.eq(true, "team_id", project.getTeamId());
         int count = count(queryWrapper);
-        RestResponse response = RestResponse.create();
         if (count == 0) {
             project.setDate(new Date());
             boolean status = save(project);
@@ -307,7 +309,8 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project>
             }
         }
         LambdaQueryWrapper<Project> wrapper = new QueryWrapper<Project>().lambda()
-            .eq(Project::getName, project.getName());
+            .eq(Project::getName, project.getName())
+            .eq(Project::getTeamId, project.getTeamId());
         return this.baseMapper.selectCount(wrapper) > 0;
     }
 
