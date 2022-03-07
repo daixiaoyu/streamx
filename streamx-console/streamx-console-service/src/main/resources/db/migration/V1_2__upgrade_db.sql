@@ -41,7 +41,7 @@ update `t_flink_project` set `url`='https://gitee.com/streamxhub/streamx-quickst
 
 
 -- ----------------------------
--- Table structure for t_group
+-- Table structure for t_team
 -- ----------------------------
 DROP TABLE IF EXISTS `streamx`.`t_team`;
 CREATE TABLE `streamx`.`t_team`
@@ -64,27 +64,28 @@ CREATE TABLE `streamx`.`t_team_user`
     UNIQUE KEY `GROUP_USER` (`TEAM_ID`,`USER_ID`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-
+-- 设置初识的大数据组
 insert into streamx.t_team values (1,'bigdata','大数据组','2022-02-21 18:00:00');
-insert into streamx.t_team_user values (1, 1,'2022-02-21 18:00:00');
 
-
+-- 给 app 和 project 加字段
 ALTER TABLE `streamx`.`t_flink_app` ADD COLUMN `TEAM_ID` bigint not null default 0 comment '任务所属组';
+ALTER TABLE `streamx`.`t_flink_project` ADD COLUMN `TEAM_ID` bigint not null default 0 comment '项目所属组';
 
-ALTER TABLE `streamx`.`t_flink_project`
-    ADD COLUMN `TEAM_ID` bigint not null default 0 comment '项目所属组';
+-- 将默认的组全部设置到 大数据组
+update `streamx`.`t_flink_app` set TEAM_ID=1 where  TEAM_ID=0;
+update `streamx`.`t_flink_project` set TEAM_ID=1 where  TEAM_ID=0;
 
+-- 添加菜单
 INSERT INTO `t_menu` VALUES (37, 1, 'Team Management', '/system/team', 'system/team/Team', 'team:view', 'team', '0', '1', 1, NOW(), NULL);
 INSERT INTO `t_menu` VALUES (38, 37, 'add', NULL, NULL, 'team:add', NULL, '1', '1', NULL, NOW(), NULL);
 INSERT INTO `t_menu` VALUES (39, 37, 'update', NULL, NULL, 'team:update', NULL, '1', '1', NULL, NOW(), NULL);
 INSERT INTO `t_menu` VALUES (40, 37, 'delete', NULL, NULL, 'team:delete', NULL, '1', '1', NULL, NOW(), NULL);
 
-
+-- 将添加的菜单授权给 Admin
 INSERT INTO `t_role_menu` VALUES (1, 37);
 INSERT INTO `t_role_menu` VALUES (1, 38);
 INSERT INTO `t_role_menu` VALUES (1, 39);
 INSERT INTO `t_role_menu` VALUES (1, 40);
-
 
 SET FOREIGN_KEY_CHECKS = 1;
 

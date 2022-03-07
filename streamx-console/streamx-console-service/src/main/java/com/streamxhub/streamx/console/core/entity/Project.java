@@ -104,6 +104,8 @@ public class Project implements Serializable {
     @JsonIgnore
     private transient SettingService settingService;
 
+    private transient String teamName;
+
     /**
      * 获取项目源码路径
      *

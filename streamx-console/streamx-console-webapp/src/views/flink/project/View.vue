@@ -83,6 +83,15 @@
             </a-popover>
           </a-list-item-meta>
 
+          <div class="list-content-item">
+            <p>
+              <a-tag
+                color="blue">
+                {{ item.teamName }}
+              </a-tag>
+            </p>
+          </div>
+
           <div class="list-content">
             <div
               class="list-content-item">
@@ -93,6 +102,8 @@
                   two-tone-color />
               </p>
             </div>
+
+
             <div class="list-content-item">
               <span>Branches</span>
               <p>

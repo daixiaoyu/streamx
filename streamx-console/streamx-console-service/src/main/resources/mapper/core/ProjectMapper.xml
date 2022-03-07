@@ -19,7 +19,8 @@
     </resultMap>
 
     <select id="findProject" resultType="project" parameterType="project">
-        SELECT * FROM t_flink_project t
+        SELECT *,b.team_name as teamName FROM t_flink_project t
+        left join t_team b on t.team_id = b.team_id
         <where>
             <if test="project.name != null and project.name != ''">
                 AND t.name like '%${project.name}%'
