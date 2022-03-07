@@ -365,6 +365,21 @@
       </template>
 
       <a-form-item
+        label="Team"
+        :label-col="{lg: {span: 5}, sm: {span: 7}}"
+        :wrapper-col="{lg: {span: 16}, sm: {span: 17} }">
+        <a-select
+          :allow-clear="true"
+          v-decorator="['teamId',{rules: [{ required: true, message: 'please select team' }]}]">
+          <a-select-option
+            v-for="t in teamData"
+            :key="t.teamId">
+            {{ t.teamName }}
+          </a-select-option>
+        </a-select>
+      </a-form-item>
+
+      <a-form-item
         label="Application Name"
         :label-col="{lg: {span: 5}, sm: {span: 7}}"
         :wrapper-col="{lg: {span: 16}, sm: {span: 17} }">
@@ -879,6 +894,7 @@
 <script>
 import Ellipsis from '@/components/Ellipsis'
 import {jars, listConf, modules, select} from '@api/project'
+import {listByUser as getUserTeam} from '@/api/team'
 import {create, exists, main, name, readConf, upload} from '@api/application'
 import {list as listFlinkEnv} from '@/api/flinkenv'
 import {template} from '@api/config'
@@ -910,6 +926,7 @@ export default {
       jobType: 'sql',
       tableEnv: 1,
       projectList: [],
+      teamData:[],
       projectId: null,
       versionId: null,
       module: null,
@@ -1108,6 +1125,12 @@ export default {
         this.projectList = resp.data
       }).catch((error) => {
         this.$message.error(error.message)
+      })
+
+      getUserTeam(
+        {'pageSize': '9999'}
+      ).then((resp) => {
+        this.teamData = resp.data.records
       })
     },
 
@@ -1543,7 +1566,8 @@ export default {
         description: values.description,
         k8sNamespace: values.k8sNamespace || null,
         clusterId: values.clusterId || null,
-        flinkImage: values.flinkImage || null
+        flinkImage: values.flinkImage || null,
+        teamId: values.teamId
       }
       if (params.executionMode === 6) {
         params.k8sPodTemplate = this.podTemplate
@@ -1616,7 +1640,8 @@ export default {
         description: values.description || null,
         k8sNamespace: values.k8sNamespace || null,
         clusterId: values.clusterId || null,
-        flinkImage: values.flinkImage || null
+        flinkImage: values.flinkImage || null,
+        teamId: values.teamId
       }
       if (params.executionMode === 6) {
         params.k8sPodTemplate = this.podTemplate
