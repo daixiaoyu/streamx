@@ -238,6 +238,7 @@
                 :label-col="{span: 2}"
                 :wrapper-col="{span: 15, offset: 0}">
                 <a-select
+                  @change="handleFetch"
                   v-model="queryParams.userId"
                   :allow-clear="true"
                   style="width: 100%" >
@@ -260,6 +261,7 @@
                 :label-col="{span: 2}"
                 :wrapper-col="{span: 15, offset: 0}">
                 <a-select
+                  @change="handleFetch"
                   v-model="queryParams.teamId"
                   :allow-clear="true"
                   style="width: 100%" >
