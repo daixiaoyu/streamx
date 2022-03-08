@@ -52,6 +52,9 @@ public class ProjectController {
     @PostMapping("create")
     @RequiresPermissions("project:create")
     public RestResponse create(Project project) {
+        if (project.getTeamId() == null || project.getTeamId() <= 0L) {
+            return RestResponse.create().message("请选择项目团队").data(false);
+        }
         return projectService.create(project);
     }
 
