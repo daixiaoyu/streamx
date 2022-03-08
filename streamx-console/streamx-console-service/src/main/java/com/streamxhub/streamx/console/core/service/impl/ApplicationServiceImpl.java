@@ -447,6 +447,7 @@ public class ApplicationServiceImpl extends ServiceImpl<ApplicationMapper, Appli
             }
             app.setFlinkVersion(record.getFlinkVersion());
             app.setProjectName(record.getProjectName());
+            app.setTeamName(record.getTeamName());
             return app;
         }).collect(Collectors.toList());
         page.setRecords(newRecords);
