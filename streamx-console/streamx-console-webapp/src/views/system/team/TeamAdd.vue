@@ -159,9 +159,9 @@ export default {
         if (teamcode.length > 20) {
           this.validateStatus = 'error'
           this.code = 'code不能超过10个字符'
-        } else if (teamcode.length < 4) {
+        } else if (teamcode.length < 2) {
           this.validateStatus = 'error'
-          this.code = 'code不能少于4个字符'
+          this.code = 'code不能少于2个字符'
         } else {
           this.validateStatus = 'validating'
           checkTeamCode({

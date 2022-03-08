@@ -248,7 +248,7 @@
                   <a-select-option
                     v-for="t in users"
                     :key="t.userId">
-                    {{ t.username }}
+                    {{ t.nickName }}
                   </a-select-option>
                 </a-select>
               </a-form-item>
