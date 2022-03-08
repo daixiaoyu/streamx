@@ -102,7 +102,6 @@
 <script>
 
 import UserAdd from './TeamAdd'
-import UserEdit from './TeamEdit'
 import RangeDate from '@/components/DateTime/RangeDate'
 import SvgIcon from '@/components/SvgIcon'
 
@@ -112,7 +111,7 @@ import {USER_NAME} from '@/store/mutation-types'
 
 export default {
   name: 'Team',
-  components: { UserAdd, UserEdit, RangeDate, SvgIcon },
+  components: { UserAdd, RangeDate, SvgIcon },
   data () {
     return {
       userAdd: {

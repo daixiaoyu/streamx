@@ -131,9 +131,9 @@ export default {
         if (teamname.length > 20) {
           this.validateStatus = 'error'
           this.help = 'team name不能超过10个字符'
-        } else if (teamname.length < 4) {
+        } else if (teamname.length < 2) {
           this.validateStatus = 'error'
-          this.help = 'team name不能少于4个字符'
+          this.help = 'team name不能少于2个字符'
         } else {
           this.validateStatus = 'validating'
           checkTeamName({
