@@ -20,6 +20,7 @@
  */
 package com.streamxhub.streamx.console.core.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.streamxhub.streamx.console.base.domain.RestRequest;
 import com.streamxhub.streamx.console.base.domain.RestResponse;
@@ -123,7 +124,9 @@ public class ProjectController {
     }
 
     @PostMapping("select")
-    public RestResponse select() {
-        return RestResponse.create().data(projectService.list());
+    public RestResponse select(Long teamId) {
+        QueryWrapper<Project> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("team_id",teamId);
+        return RestResponse.create().data(projectService.list(queryWrapper));
     }
 }

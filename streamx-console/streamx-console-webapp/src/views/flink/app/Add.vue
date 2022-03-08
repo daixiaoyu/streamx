@@ -60,6 +60,22 @@
         </a-select>
       </a-form-item>
 
+      <a-form-item
+        label="Team"
+        :label-col="{lg: {span: 5}, sm: {span: 7}}"
+        :wrapper-col="{lg: {span: 16}, sm: {span: 17} }">
+        <a-select
+          :allow-clear="true"
+          @change="handleChangeTeam"
+          v-decorator="['teamId',{rules: [{ required: true, message: 'please select team' }]}]">
+          <a-select-option
+            v-for="t in teamData"
+            :key="t.teamId">
+            {{ t.teamName }}
+          </a-select-option>
+        </a-select>
+      </a-form-item>
+
       <template v-if="executionMode === 5|| executionMode === 6">
         <a-form-item
           label="Kubernetes Namespace"
@@ -364,20 +380,6 @@
         </a-form-item>
       </template>
 
-      <a-form-item
-        label="Team"
-        :label-col="{lg: {span: 5}, sm: {span: 7}}"
-        :wrapper-col="{lg: {span: 16}, sm: {span: 17} }">
-        <a-select
-          :allow-clear="true"
-          v-decorator="['teamId',{rules: [{ required: true, message: 'please select team' }]}]">
-          <a-select-option
-            v-for="t in teamData"
-            :key="t.teamId">
-            {{ t.teamName }}
-          </a-select-option>
-        </a-select>
-      </a-form-item>
 
       <a-form-item
         label="Application Name"
@@ -650,7 +652,8 @@
         <p class="conf-desc" style="margin-top: -3px">
           <span class="note-info">
             <a-tag color="#2db7f5" class="tag-note">Note</a-tag>
-            Explicitly configuring both <span class="note-elem">total process memory</span> and <span class="note-elem">total Flink memory</span> is not recommended. It may lead to deployment failures due to potential memory configuration conflicts. Configuring other memory components also requires caution as it can produce further configuration conflicts,
+            Explicitly configuring both <span class="note-elem">total process memory</span> and <span
+            class="note-elem">total Flink memory</span> is not recommended. It may lead to deployment failures due to potential memory configuration conflicts. Configuring other memory components also requires caution as it can produce further configuration conflicts,
             The easiest way is to set <span class="note-elem">total process memory</span>
           </span>
         </p>
@@ -926,7 +929,8 @@ export default {
       jobType: 'sql',
       tableEnv: 1,
       projectList: [],
-      teamData:[],
+      teamData: [],
+      teamId: null,
       projectId: null,
       versionId: null,
       module: null,
@@ -1121,12 +1125,6 @@ export default {
     },
 
     select() {
-      select().then((resp) => {
-        this.projectList = resp.data
-      }).catch((error) => {
-        this.$message.error(error.message)
-      })
-
       getUserTeam(
         {'pageSize': '9999'}
       ).then((resp) => {
@@ -1182,7 +1180,16 @@ export default {
     handleTableEnv(value) {
       this.tableEnv = value
     },
-
+    handleChangeTeam(value) {
+      this.teamId = value
+      select({
+        teamId: value
+      }).then((resp) => {
+        this.projectList = resp.data
+      }).catch((error) => {
+        this.$message.error(error.message)
+      })
+    },
     handleChangeProject(value) {
       this.projectId = value
       modules({
@@ -1226,7 +1233,7 @@ export default {
     },
 
     handleClusterId(value) {
-      if (this.executionMode === 6){
+      if (this.executionMode === 6) {
         this.form.setFieldsValue({jobName: value.target.value})
       }
     },
@@ -1295,11 +1302,11 @@ export default {
     },
 
     handleCustomRequest(data) {
-      const executionMode =  this.form.getFieldValue('executionMode') || null
+      const executionMode = this.form.getFieldValue('executionMode') || null
       if (executionMode !== null) {
         const formData = new FormData()
         formData.append('file', data.file)
-        formData.append('executionMode',executionMode)
+        formData.append('executionMode', executionMode)
         upload(formData).then((resp) => {
           this.loading = false
           this.controller.dependency.jar.set(data.file.name, data.file.name)
