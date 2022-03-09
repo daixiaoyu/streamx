@@ -62,13 +62,13 @@
 
       <a-form-item
         label="Role"
-        v-bind="formItemLayout" >
+        v-bind="formItemLayout">
         <a-select
-                  @change="handleRoleChange"
-                  mode="multiple"
-                  :allow-clear="true"
-                  style="width: 100%"
-                  v-decorator="['roleId',{rules: [{ required: true, message: 'please select role' }]}]">
+          @change="handleRoleChange"
+          mode="multiple"
+          :allow-clear="true"
+          style="width: 100%"
+          v-decorator="['roleId',{rules: [{ required: true, message: 'please select role' }]}]">
           <a-select-option
             v-for="r in roleData"
             :key="r.roleId">
@@ -170,7 +170,7 @@ export default {
       form: this.$form.createForm(this),
       validateStatus: '',
       help: '',
-      roles:[]
+      roles: []
     }
   },
   methods: {
@@ -185,7 +185,7 @@ export default {
       this.$emit('close')
     },
     handleRoleChange(v) {
-      this.roles=v
+      this.roles = v
     },
     handleSubmit() {
       if (this.validateStatus !== 'success') {
@@ -194,7 +194,9 @@ export default {
       this.form.validateFields((err, user) => {
         if (!err && this.validateStatus === 'success') {
           user.roleId = user.roleId.join(',')
-          user.teamId = user.teamId.join(',')
+          if (user != undefined && user.teamId != undefined) {
+            user.teamId = user.teamId.join(',')
+          }
           post({
             ...user
           }).then((r) => {

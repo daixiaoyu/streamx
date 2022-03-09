@@ -224,7 +224,9 @@ export default {
           this.loading = true
           const user = this.form.getFieldsValue()
           user.roleId = user.roleId.join(',')
-          user.teamId = user.teamId.join(',')
+          if (user != undefined && user.teamId != undefined) {
+            user.teamId = user.teamId.join(',')
+          }
           user.userId = this.userId
           update(user).then((r) => {
             if (r.status === 'success') {

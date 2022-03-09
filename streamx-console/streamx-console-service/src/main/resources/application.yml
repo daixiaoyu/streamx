@@ -37,10 +37,17 @@ spring:
       datasource:
         # 数据源-1，名称为 primary
         primary:
-          username: root
-          password: jh2gQuxAXeq6LlXiy9oo#
           driver-class-name: com.mysql.cj.jdbc.Driver
-          url: jdbc:mysql://172.20.0.58:3306/streamx?useUnicode=true&characterEncoding=UTF-8&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=GMT%2B8
+          url: jdbc:mysql://dp-hadoop-01:3306/streamx?useUnicode=true&characterEncoding=UTF-8&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=GMT%2B8
+          username: root
+          password: 9ox3tphQLh_=
+#      datasource:
+#        # 数据源-1，名称为 primary
+#        primary:
+#          username: root
+#          password: jh2gQuxAXeq6LlXiy9oo#
+#          driver-class-name: com.mysql.cj.jdbc.Driver
+#          url: jdbc:mysql://172.20.0.58:3306/streamx?useUnicode=true&characterEncoding=UTF-8&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=GMT%2B8
   aop.proxy-target-class: true
   messages.encoding: utf-8
   jackson:

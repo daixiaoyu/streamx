@@ -99,7 +99,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         if (resPage != null && !resPage.getRecords().isEmpty()) {
             List<User> users = resPage.getRecords();
             users.forEach(u -> {
-                if (u.getUserId().equals(nowUser)){
+                if (u.getUserId().equals(nowUser)) {
                     u.setIsNow(true);
                 }
 
@@ -155,9 +155,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         String[] roles = user.getRoleId().split(StringPool.COMMA);
         setUserRoles(user, roles);
 
-        // 保存团队用户
-        String[] teams = user.getTeamId().split(StringPool.COMMA);
-        setUserTeams(user, teams);
+        if (null != user.getTeamId()) {
+            // 保存团队用户
+            String[] teams = user.getTeamId().split(StringPool.COMMA);
+            setUserTeams(user, teams);
+        }
+
     }
 
     @Override
@@ -173,8 +176,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         setUserRoles(user, roles);
 
         teamUserService.deleteTeamUsersByUserId(new String[]{user.getUserId().toString()});
-        String[] teams = user.getTeamId().split(StringPool.COMMA);
-        setUserTeams(user, teams);
+        if (null != user.getTeamId()) {
+            String[] teams = user.getTeamId().split(StringPool.COMMA);
+            setUserTeams(user, teams);
+        }
+
     }
 
     @Override
