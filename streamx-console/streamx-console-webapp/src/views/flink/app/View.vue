@@ -223,7 +223,7 @@
 
     <div
       class="table-page-search-wrapper"
-      style="margin-top: 30px;">
+      style="margin-top: 30px;margin-left: 20px">
       <a-form
         layout="inline">
         <a-row
