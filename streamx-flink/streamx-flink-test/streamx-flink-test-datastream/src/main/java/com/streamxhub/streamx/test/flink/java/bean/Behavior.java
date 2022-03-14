@@ -17,22 +17,15 @@
  * limitations under the License.
  */
 
-package com.streamxhub.streamx.console.core.dao;
+package com.streamxhub.streamx.test.flink.java.bean;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.streamxhub.streamx.console.core.entity.Setting;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
+import lombok.Data;
 
-/**
- * @author benjobs
- */
-public interface SettingMapper extends BaseMapper<Setting> {
-
-    @Select("select * from t_setting where `key`=#{key}")
-    Setting get(@Param("key") String key);
-
-    @Update("update t_setting set `value` = #{setting.value} where `key` = #{setting.key}")
-    void updateByKey(@Param("setting") Setting setting);
+@Data
+public class Behavior {
+    private String user_id;
+    private Long item_id;
+    private Long category_id;
+    private String behavior;
+    private Long ts;
 }

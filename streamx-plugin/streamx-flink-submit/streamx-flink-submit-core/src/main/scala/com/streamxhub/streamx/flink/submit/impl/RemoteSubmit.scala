@@ -19,9 +19,7 @@
 
 package com.streamxhub.streamx.flink.submit.impl
 
-import com.streamxhub.streamx.common.enums.DevelopmentMode
 import com.streamxhub.streamx.common.util.Utils
-import com.streamxhub.streamx.flink.packer.pipeline.ShadedBuildResponse
 import com.streamxhub.streamx.flink.submit.`trait`.FlinkSubmitTrait
 import com.streamxhub.streamx.flink.submit.bean.{StopRequest, StopResponse, SubmitRequest, SubmitResponse}
 import com.streamxhub.streamx.flink.submit.tool.FlinkSessionSubmitHelper
@@ -45,9 +43,9 @@ object RemoteSubmit extends FlinkSubmitTrait {
    */
   override def setConfig(submitRequest: SubmitRequest, flinkConfig: Configuration): Unit = {
     flinkConfig
-      .safeSet(PipelineOptions.NAME, submitRequest.effectiveAppName)
       .safeSet(RestOptions.ADDRESS, submitRequest.extraParameter.get(RestOptions.ADDRESS.key()).toString)
       .safeSet[JavaInt](RestOptions.PORT, submitRequest.extraParameter.get(RestOptions.PORT.key()).toString.toInt)
+
     logInfo(
       s"""
          |------------------------------------------------------------------
@@ -57,25 +55,12 @@ object RemoteSubmit extends FlinkSubmitTrait {
   }
 
   override def doSubmit(submitRequest: SubmitRequest, flinkConfig: Configuration): SubmitResponse = {
-    // 1) get userJar
-    val jarFile = submitRequest.developmentMode match {
-      case DevelopmentMode.FLINKSQL =>
-
-        submitRequest.checkBuildResult()
-        // 1) get build result
-        val buildResult = submitRequest.buildResult.asInstanceOf[ShadedBuildResponse]
-        // 2) get fat-jar
-        new File(buildResult.shadedJarPath)
-      case _ => new File(submitRequest.flinkUserJar)
-    }
-
     // 2) submit job
-    super.trySubmit(submitRequest, flinkConfig, jarFile)(restApiSubmit)(jobGraphSubmit)
+    super.trySubmit(submitRequest, flinkConfig, submitRequest.userJarFile)(restApiSubmit)(jobGraphSubmit)
 
   }
 
-  override def doStop(stopRequest: StopRequest): StopResponse = {
-    val flinkConfig = new Configuration()
+  override def doStop(stopRequest: StopRequest, flinkConfig: Configuration): StopResponse = {
     flinkConfig
       .safeSet(DeploymentOptions.TARGET, stopRequest.executionMode.getName)
       .safeSet(RestOptions.ADDRESS, stopRequest.extraParameter.get(RestOptions.ADDRESS.key()).toString)
