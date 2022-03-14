@@ -106,11 +106,13 @@ object RemoteSubmit extends FlinkSubmitTrait {
     var client: ClusterClient[StandaloneClusterId] = null
     try {
       val standAloneDescriptor = getStandAloneClusterDescriptor(flinkConfig)
+      val yarnClusterId: StandaloneClusterId = standAloneDescriptor._1
       clusterDescriptor = standAloneDescriptor._2
-      client = clusterDescriptor.retrieve(standAloneDescriptor._1).getClusterClient
-      logInfo(s"standalone submit WebInterfaceURL ${client.getWebInterfaceURL}")
+
+      client = clusterDescriptor.retrieve(yarnClusterId).getClusterClient
       val jobId = FlinkSessionSubmitHelper.submitViaRestApi(client.getWebInterfaceURL, fatJar, flinkConfig)
-      SubmitResponse(jobId, flinkConfig.toMap, jobId)
+      logInfo(s"standalone submit WebInterfaceURL ${client.getWebInterfaceURL}, jobId: $jobId")
+      SubmitResponse(null, flinkConfig.toMap, jobId)
     } catch {
       case e: Exception =>
         logError(s"submit flink job fail in standalone mode")
@@ -135,7 +137,7 @@ object RemoteSubmit extends FlinkSubmitTrait {
       val jobGraph = packageProgramJobGraph._2
       client = clusterDescriptor.retrieve(standAloneDescriptor._1).getClusterClient
       val jobId = client.submitJob(jobGraph).get().toString
-      val result = SubmitResponse(jobId, flinkConfig.toMap, jobId)
+      val result = SubmitResponse(standAloneDescriptor._1.toString, flinkConfig.toMap, jobId)
       result
     } catch {
       case e: Exception =>

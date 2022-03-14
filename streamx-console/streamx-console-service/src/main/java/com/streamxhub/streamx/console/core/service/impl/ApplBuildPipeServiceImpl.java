@@ -38,9 +38,9 @@ import com.streamxhub.streamx.console.core.entity.AppBuildPipeline;
 import com.streamxhub.streamx.console.core.entity.Application;
 import com.streamxhub.streamx.console.core.entity.FlinkEnv;
 import com.streamxhub.streamx.console.core.entity.FlinkSql;
+import com.streamxhub.streamx.console.core.entity.Message;
 import com.streamxhub.streamx.console.core.enums.CandidateType;
 import com.streamxhub.streamx.console.core.enums.LaunchState;
-import com.streamxhub.streamx.console.core.entity.Message;
 import com.streamxhub.streamx.console.core.enums.NoticeType;
 import com.streamxhub.streamx.console.core.enums.OptionState;
 import com.streamxhub.streamx.console.core.service.ApplicationBackUpService;
@@ -445,6 +445,11 @@ public class ApplBuildPipeServiceImpl
         return rMaps.stream().collect(Collectors.toMap(
                 e -> (Long) e.get("app_id"),
                 e -> PipelineStatus.of((Integer) e.get("pipe_status"))));
+    }
+
+    @Override
+    public void removeApp(Long appId) {
+        baseMapper.delete(new QueryWrapper<AppBuildPipeline>().lambda().eq(AppBuildPipeline::getAppId, appId));
     }
 
     public boolean saveEntity(AppBuildPipeline pipe) {
