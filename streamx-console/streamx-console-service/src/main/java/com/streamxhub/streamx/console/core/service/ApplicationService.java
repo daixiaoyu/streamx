@@ -88,4 +88,6 @@ public interface ApplicationService extends IService<Application> {
     List<Application> getByProjectId(Long id);
 
     boolean checkBuildAndUpdate(Application app);
+
+    Long getCountByTeam(Long teamId);
 }

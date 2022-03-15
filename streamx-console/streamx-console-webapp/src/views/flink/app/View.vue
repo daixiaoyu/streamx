@@ -212,9 +212,81 @@
         </a-col>
       </template>
     </a-row>
-    <a-card
-      :bordered="false"
-      style="margin-top: 20px">
+
+    <div
+      class="table-page-search-wrapper"
+      style="margin-top: 30px;margin-left: 20px">
+      <a-form
+        layout="inline">
+        <a-row
+          :gutter="48">
+          <div
+            class="fold">
+            <a-col
+              :md="6"
+              :sm="24">
+              <a-form-item
+                label="User "
+                :label-col="{span: 2}"
+                :wrapper-col="{span: 15, offset: 0}">
+                <a-select
+                  @change="handleFetch"
+                  v-model="queryParams.userId"
+                  :allow-clear="true"
+                  style="width: 100%" >
+                  <a-select-option key="">
+                    All User
+                  </a-select-option>
+                  <a-select-option
+                    v-for="t in users"
+                    :key="t.userId">
+                    {{ t.nickName }}
+                  </a-select-option>
+                </a-select>
+              </a-form-item>
+            </a-col>
+            <a-col
+              :md="6"
+              :sm="24">
+              <a-form-item
+                label="Team "
+                :label-col="{span: 2}"
+                :wrapper-col="{span: 15, offset: 0}">
+                <a-select
+                  @change="handleFetch"
+                  v-model="queryParams.teamId"
+                  :allow-clear="true"
+                  style="width: 100%" >
+                  <a-select-option key="">
+                    All Team
+                  </a-select-option>
+                  <a-select-option
+                    v-for="t in teamData"
+                    :key="t.teamId">
+                    {{ t.teamName }}
+                  </a-select-option>
+                </a-select>
+              </a-form-item>
+            </a-col>
+
+          </div>
+          <a-col
+            :md="8"
+            :sm="24">
+            <span
+              class="table-page-search-bar">
+              <a-button
+                type="primary"
+                shape="circle"
+                icon="search"
+                @click="handleFetch" />
+            </span>
+          </a-col>
+        </a-row>
+      </a-form>
+    </div>
+
+    <a-card :bordered="false" >
       <!-- 表格区域 -->
       <a-table
         ref="TableInfo"
@@ -1045,6 +1117,8 @@ import Ellipsis from '@/components/Ellipsis'
 import State from './State'
 import {mapActions} from 'vuex'
 import {cancel, clean, dashboard, downLog, list, mapping, remove, revoke, start, yarn} from '@api/application'
+import { list as listUser } from '@/api/user'
+import { listByUser as getUserTeam } from '@/api/team'
 import {history, latest} from '@api/savepoint'
 import {flamegraph} from '@api/metrics'
 import {weburl} from '@api/setting'
@@ -1064,6 +1138,9 @@ export default {
       dashLoading: true,
       dashBigScreen: true,
       dataSource: [],
+      queryParams: {},
+      users:[],
+      teamData:[],
       metrics: {
         availableSlot: 0,
         totalSlot: 0,
@@ -1076,7 +1153,6 @@ export default {
         }
       },
       expandedRow: ['appId', 'jmMemory', 'tmMemory', 'totalTM', 'totalSlot', 'availableSlot', 'flinkCommit'],
-      queryParams: {},
       sortedInfo: null,
       filteredInfo: null,
       queryInterval: 2000,
@@ -1178,8 +1254,8 @@ export default {
           }
         },
       }, {
-        title: 'Flink Version',
-        dataIndex: 'flinkVersion',
+        title: 'Team',
+        dataIndex: 'teamName',
         width: 120
       }, {
         title: 'Start Time',
@@ -1236,8 +1312,27 @@ export default {
   },
 
   mounted() {
+    listUser({ 'pageSize': '9999' }).then((resp) => {
+      this.users = resp.data.records
+      this.users.forEach((user)=>{
+          if (user.isNow){
+            debugger
+            this.$set(this.queryParams,'userId',user.userId)
+          }
+        }
+      )
+      this.handleFetch(true)
+    })
+
+    getUserTeam(
+      { 'pageSize': '9999' }
+    ).then((resp) => {
+      this.teamData = resp.data.records
+      this.search()
+    })
+
     this.handleDashboard()
-    this.handleFetch(true)
+
     const timer = window.setInterval(() => {
       this.handleDashboard()
       this.handleFetch(false)
@@ -1802,6 +1897,16 @@ export default {
         params.pageNum = this.pagination.defaultCurrent
       }
       list({...params}).then((resp) => {
+
+
+          if (!resp.data) {
+            this.$swal.fire(
+              '未加入项目组',
+               resp.message.replaceAll(/\[StreamX]/g,''),
+              'error'
+            )
+          }
+
         this.loading = false
         const pagination = {...this.pagination}
         pagination.total = parseInt(resp.data.total)

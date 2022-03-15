@@ -94,6 +94,22 @@
         </a-form-item>
       </template>
 
+      <a-form-item
+        label="Team"
+        :label-col="{lg: {span: 5}, sm: {span: 7}}"
+        :wrapper-col="{lg: {span: 16}, sm: {span: 17} }">
+        <a-select
+          :allow-clear="true"
+          @change="handleChangeTeam"
+          v-decorator="['teamId',{rules: [{ required: true, message: 'please select team' }]}]">
+          <a-select-option
+            v-for="t in teamData"
+            :key="t.teamId">
+            {{ t.teamName }}
+          </a-select-option>
+        </a-select>
+      </a-form-item>
+
       <template v-if="executionMode === 5|| executionMode === 6">
         <a-form-item
           label="Kubernetes Namespace"
@@ -1480,6 +1496,7 @@ import {jars, listConf, modules, select} from '@api/project'
 import {create, checkName, main, name, readConf, upload} from '@api/application'
 import {list as listFlinkEnv} from '@/api/flinkEnv'
 import {list as listFlinkCluster} from '@/api/flinkCluster'
+import {listByUser as getUserTeam} from '@/api/team'
 import {template} from '@api/config'
 import {checkHadoop} from '@api/setting'
 import Mergely from './Mergely'
@@ -1532,6 +1549,8 @@ export default {
       resourceFrom: null,
       tableEnv: 1,
       projectList: [],
+      teamData: [],
+      teamId: null,
       projectId: null,
       versionId: null,
       scalaVersion: null,
@@ -1763,10 +1782,10 @@ export default {
     },
 
     select() {
-      select().then((resp) => {
-        this.projectList = resp.data
-      }).catch((error) => {
-        this.$message.error(error.message)
+      getUserTeam(
+        {'pageSize': '9999'}
+      ).then((resp) => {
+        this.teamData = resp.data.records
       })
     },
 
@@ -1842,7 +1861,16 @@ export default {
     handleTableEnv(value) {
       this.tableEnv = value
     },
-
+    handleChangeTeam(value) {
+      this.teamId = value
+      select({
+        teamId: value
+      }).then((resp) => {
+        this.projectList = resp.data
+      }).catch((error) => {
+        this.$message.error(error.message)
+      })
+    },
     handleChangeProject(value) {
       this.projectId = value
       modules({
@@ -2327,7 +2355,8 @@ export default {
         clusterId: values.clusterId || null,
         flinkClusterId: values.flinkClusterId || null,
         flinkImage: values.flinkImage || null,
-        yarnSessionClusterId: values.yarnSessionClusterId || null
+        yarnSessionClusterId: values.yarnSessionClusterId || null,
+        teamId: values.teamId
       }
       if (params.executionMode === 6) {
         params.k8sPodTemplate = this.podTemplate
@@ -2420,7 +2449,8 @@ export default {
         clusterId: values.clusterId || null,
         flinkClusterId: values.flinkClusterId || null,
         flinkImage: values.flinkImage || null,
-        yarnSessionClusterId: values.yarnSessionClusterId || null
+        yarnSessionClusterId: values.yarnSessionClusterId || null,
+        teamId: values.teamId
       }
       if (params.executionMode === 6) {
         params.k8sPodTemplate = this.podTemplate

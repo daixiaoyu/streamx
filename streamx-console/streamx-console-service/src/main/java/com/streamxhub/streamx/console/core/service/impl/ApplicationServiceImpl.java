@@ -79,6 +79,8 @@ import com.streamxhub.streamx.console.core.service.ProjectService;
 import com.streamxhub.streamx.console.core.service.SavePointService;
 import com.streamxhub.streamx.console.core.service.SettingService;
 import com.streamxhub.streamx.console.core.task.FlinkTrackingTask;
+import com.streamxhub.streamx.console.system.authentication.ServerComponent;
+import com.streamxhub.streamx.console.system.service.TeamUserService;
 import com.streamxhub.streamx.flink.core.conf.ParameterCli;
 import com.streamxhub.streamx.flink.kubernetes.K8sFlinkTrkMonitor;
 import com.streamxhub.streamx.flink.kubernetes.model.FlinkMetricCV;
@@ -196,10 +198,14 @@ public class ApplicationServiceImpl extends ServiceImpl<ApplicationMapper, Appli
     @Autowired
     private FlinkClusterService flinkClusterService;
 
+    @Autowired
+    private TeamUserService groupUserService;
+
     @PostConstruct
     public void resetOptionState() {
         this.baseMapper.resetOptionState();
     }
+
 
     @Override
     public Map<String, Serializable> dashboard() {
@@ -418,6 +424,11 @@ public class ApplicationServiceImpl extends ServiceImpl<ApplicationMapper, Appli
         }
     }
 
+    @Override
+    public Long getCountByTeam(Long teamId) {
+        return baseMapper.getCountByTeam(teamId);
+    }
+
     @RefreshCache
     private void updateState(Application application, FlinkAppState state) {
         application.setState(state.getValue());
@@ -439,6 +450,8 @@ public class ApplicationServiceImpl extends ServiceImpl<ApplicationMapper, Appli
     @Override
     public IPage<Application> page(Application appParam, RestRequest request) {
         Page<Application> page = new Page<>();
+        List<Long> groupIdList = groupUserService.getTeamIdList();
+        appParam.setTeamIdList(groupIdList);
         SortUtils.handlePageSort(request, page, "create_time", Constant.ORDER_DESC, false);
         this.baseMapper.page(page, appParam);
         //瞒天过海,暗度陈仓,偷天换日,鱼目混珠.
@@ -459,6 +472,7 @@ public class ApplicationServiceImpl extends ServiceImpl<ApplicationMapper, Appli
             }
             app.setFlinkVersion(record.getFlinkVersion());
             app.setProjectName(record.getProjectName());
+            app.setTeamName(record.getTeamName());
             return app;
         }).collect(Collectors.toList());
         page.setRecords(newRecords);
@@ -486,8 +500,8 @@ public class ApplicationServiceImpl extends ServiceImpl<ApplicationMapper, Appli
             return AppExistsState.INVALID;
         }
         boolean inDB = this.baseMapper.selectCount(
-                new QueryWrapper<Application>().lambda()
-                        .eq(Application::getJobName, appParam.getJobName())) > 0;
+            new QueryWrapper<Application>().lambda()
+                .eq(Application::getJobName, appParam.getJobName())) > 0;
 
         if (appParam.getId() != null) {
             Application app = getById(appParam.getId());
