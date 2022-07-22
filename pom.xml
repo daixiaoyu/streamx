@@ -62,8 +62,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <scala.version>2.12.7</scala.version>
-        <scala.binary.version>2.12</scala.binary.version>
+        <scala.version>2.11.10</scala.version>
+        <scala.binary.version>2.11</scala.binary.version>
         <scalatest.version>3.2.9</scalatest.version>
         <scala.binary.flink.version>_${scala.binary.version}</scala.binary.flink.version>
 
